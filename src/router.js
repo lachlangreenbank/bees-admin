@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import MilestoneList from './views/MilestoneList'
+import MilestoneDetail from './views/MilestoneDetail'
+import AgreementList from './views/AgreementList'
+import AgreementMilestones from './views/AgreementMilestones'
 
 Vue.use(Router)
 
@@ -10,16 +13,33 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'milestoneList',
+      component: MilestoneList
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    }
+      path: '/milestone-list',
+      name: 'milestone-list',
+      component: MilestoneList
+    },
+    {
+      path: '/milestone-detail/:milestone_id',
+      name: 'milestone-detail',
+      component: MilestoneDetail
+    },
+    {
+      path: '/agreement-list',
+      name: 'agreement-list',
+      component: AgreementList
+    },
+    {
+      path: '/agreement-milestones/:agreement',
+      name: 'agreement-milestones',
+      component: AgreementMilestones
+    },
+    {
+      path: '/agreement-milestones/:agreement/:milestone_id/m_id/:milestone_pk_id',
+      name: 'agreement-milestone-detail',
+      component: MilestoneDetail
+    },
   ]
 })

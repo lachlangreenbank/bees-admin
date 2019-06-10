@@ -1,29 +1,78 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+        <v-content>
+    <v-layout style="margin:0 important" fill-height wrap>
+      <v-navigation-drawer height="100%" width="180" dark permanent>
+          <v-toolbar flat>
+            <v-list>
+              <v-list-tile>
+                <v-list-tile-title class="title">
+                  PHA-admin
+                </v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-toolbar>
+
+          <v-divider></v-divider>
+
+          <v-list dense class="pt-0">
+             
+            <v-list-tile
+              @click="$router.push('../../agreement-list')"
+            >
+                <v-icon style="margin-right:10px">dashboard</v-icon>
+              <v-list-tile-content>
+                <v-list-tile-title>Agreements</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+           
+          
+            <v-list-tile
+              @click="$router.push('../../milestone-list')"
+
+            >
+                <v-icon style="margin-right:10px">dashboard</v-icon>
+              <v-list-tile-content>
+                <v-list-tile-title>Milestones</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            
+            <!--  -->
+            <v-list-tile
+              @click=""
+              color=""
+            >
+                
+              <v-list-tile-content>
+                <v-list-tile-title>Add new</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-navigation-drawer>
+
+        <v-flex>
+            <router-view></router-view>
+        </v-flex>
+      
+      </v-layout>
+
+      
+    </v-content>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+
+
+export default {
+  name: 'App',
+  components: {
+    
+  },
+  data () {
+    return {
+      //
     }
   }
 }
-</style>
+</script>
