@@ -57,31 +57,80 @@
         const result = this.milestones.filter(
           ms => ms.ms_agreement_id == this.$router.history.current.params.agreement
         );
+        
+        // If 6 milestones dont exist for this agreement, go create missing ones
+        if (result.length < 6) {
+          this.fillEmptyMilestones(result)
+        }
+        // Sorting milestones to ascending order
         let splitContextId = function (string) {return string.split('-');}
         result.sort(function(a, b) {
           a = splitContextId(a.ms_context_id)
           b = splitContextId(b.ms_context_id)
-          console.log(a)
+          
           return a[1] - b[1];
         });
         result.forEach((milestone, i) => {
-          milestone = {...milestone, Open: false}
-          console.log(milestone)
-          console.log(i)
+          milestone = {
+            ...milestone, 
+            Open: false,
+            formattedContextId: 'Agreement ' + splitContextId(milestone.ms_context_id)[0] + ' - Milestone ' + splitContextId(milestone.ms_context_id)[1]
+          }
           this.filteredMilestones.push(milestone) 
         });
         console.log( this.filteredMilestones)
       }
     },
     methods: {
-      
+
+      fillEmptyMilestones(result) {
+        let self = this
+        let setMilestone = function (context_id) {
+         let params = {
+          "context_id": context_id,
+          "completed": false,
+          "status": 'created',
+          // "ports": this.availableTests[0].selected == "1" ? true : false,
+          "hive": "1",
+          "floral_sweep": "1",
+          "catchbox": "1",
+          // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
+          "frame_inspection": "0",
+          "hornet_trapping": "0",
+          "swarm_capture": "0",
+          // "additional_activities": this.availableTests[7].selected ? "1" : "0",
+          "date_start": '0000/00/00',
+          "date_end":' 0000/00/00',
+          "extention_status": "0",
+          "extention_start": "0000/00/00",
+          "extention_end": "0000/00/00",
+          "extention_details": "extention_details create", 
+          "agreement_id": self.$router.history.current.params.agreement
+        }
+        self.$store.dispatch('setMilestone', params)
+      }
+        
+
+        let i = 1
+        for (i; i <= 6; i++) {
+          if (!result[i-1]) {
+            console.log(i)
+            let context_id = this.$router.history.current.params.agreement + '-' + i;
+            setMilestone(context_id)
+          }
+        }
+      }
     },
     data: () => ({
         milestones: [],
         milestoneListFields: [
           
           {
-            key: 'ms_context_id',
+            key: 'formattedContextId',
+            sortable: true
+          },
+          {
+            key: 'ms_status',
             sortable: true
           },
           {

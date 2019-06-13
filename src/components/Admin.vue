@@ -2,7 +2,7 @@
   <span>
     
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-navigation-drawer height="100%" width="180" dark permanent>
+      <v-navigation-drawer color="#23282d" height="100%" width="180" dark permanent>
         <v-toolbar flat>
           <v-list>
             <v-list-tile>

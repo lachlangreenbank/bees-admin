@@ -10,8 +10,9 @@
           <b-form-input></b-form-input>
         </b-input-group> -->
           <v-flex xs3>
-            <label for="exampleFormControlSelect1">Sataus</label>
+            <label for="exampleFormControlSelect1">Milestone status</label>
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
+              <option>created</option>
               <option>Pending</option>
               <option>In progress</option>
               <option>Overdue</option>
@@ -21,6 +22,44 @@
          
          
             <v-flex xs12>
+              <v-layout wrap>
+              <v-flex xs3>
+                <label for="exampleFormControlSelect1">Start date</label>
+                  <b-form-input
+                    id="input-2"
+                    v-model="milestone.data[0].ms_date_start"
+                    required
+                    placeholder="Start date"
+                  ></b-form-input>
+              </v-flex>
+              <v-flex xs3>
+                <label for="exampleFormControlSelect1">End date</label>
+                  <b-form-input
+                    id="input-2"
+                    v-model="milestone.data[0].ms_date_end"
+                    required
+                    placeholder="Start date"
+                  ></b-form-input>
+              </v-flex>
+            </v-layout>
+             </v-flex>
+
+
+
+              <v-flex xs3>
+            <label for="exampleFormControlSelect1">Extention status</label>
+            <select v-model="extentionStatus" class="form-control" id="exampleFormControlSelect1">
+              <option>Pending</option>
+              <option>In progress</option>
+              <option>Overdue</option>
+              <option>Overdue/Extended</option>
+            </select>
+        </v-flex>
+
+
+
+
+              <v-flex xs12>
               <v-layout wrap>
               <v-flex xs3>
                 <label for="exampleFormControlSelect1">Start date</label>
@@ -72,7 +111,7 @@
               </b-list-group>
           </v-flex>
          </v-layout>
-         <v-flex xs12>
+<!--          <v-flex xs12>
             <label for="exampleFormControlSelect1">Users</label>
           </v-flex>
       
@@ -93,9 +132,11 @@
                
             </b-list-group>
           </v-flex>
-
-          <v-flex xs2>
-            <v-btn outline @click="$router.go(-1)" flat> Cancel</v-btn>
+ -->
+          <v-flex xs12 d-flex>
+            <v-flex xs2>
+              <v-btn outline @click="$router.go(-1)" flat> Cancel</v-btn>
+            </v-flex>
           
             <v-flex xs2>
               <v-btn outline @click="updateMilestone()" v-bind:style= "[updated == 'updated' ? {'background-color':'green !important', 'color':'white !important'} : {}]" flat> {{updated}}</v-btn>
@@ -119,25 +160,8 @@ import { mapState } from 'vuex'
   export default {
     
     mounted: function () {
-      let {startDate, endDate, hive, floral} = this.$attrs.milestone
 
-      if (hive) {
-        this.tests.push({
-            name: 'Hive test',
-            type: 'hive',
-            selected: false
-          })
-        this.availableTests[0].selected = true
-      }
-
-      if (floral) {
-        this.tests.push({
-            name: 'Floral sweep',
-            type: 'floral',
-            selected: false
-          })
-        this.availableTests[1].selected = true
-      }
+      
     },
     created: function () {
       this.$store.dispatch('getMilestone', {Id: this.$router.history.current.params.milestone_pk_id})
@@ -163,6 +187,114 @@ import { mapState } from 'vuex'
         console.log(this.milestone)
         this.milestoneDates.startDate = this.milestone.ms_date_start
         this.milestoneDates.endDate = this.milestone.ms_date_end
+
+         this.extentionDates.startDate = this.milestone.ms_extention_start
+         this.extentionDates.endDate = this.milestone.ms_extention_end
+
+        this.milestoneStatus = this.milestone.ms_status
+        this.extentionStatus = this.milestone.ms_extention_status
+
+        if (this.milestone.data) {
+          let milestoneDisplay = {
+            // startDate: ms_date_start,
+            // endDate: ms_date_end,
+            hive: this.milestone.data[0].ms_hive,
+            floral: this.milestone.data[0].ms_floral_sweep,
+            catchbox: this.milestone.data[0].ms_catchbox,
+            stickyMat: this.milestone.data[0].ms_sticky_mat,
+            frameInspection:this.milestone.data[0]. ms_frame_inspection,
+            hornetTrapping: this.milestone.data[0].ms_hornet_trapping,
+            swarmCapture: this.milestone.data[0].ms_swarm_capture,
+           
+            additionalActivities: this.milestone.data[0].ms_additional_activities
+          } 
+
+          console.log(milestoneDisplay)
+
+          if (milestoneDisplay.hive == "1") {
+            this.tests.push({
+                name: 'Hive test',
+                type: 'hive',
+                selected: true
+              })
+            this.availableTests[0].selected = true
+          }
+
+          if (milestoneDisplay.floral == "1") {
+            this.tests.push({
+                name: 'Floral sweep',
+                type: 'floral',
+                selected: true
+              })
+            this.availableTests[1].selected = true
+          }
+
+
+          if (milestoneDisplay.catchbox == "1") {
+            this.tests.push({
+                name: 'Catchbox',
+                type: 'catchbox',
+                selected: true
+              })
+            this.availableTests[2].selected = true
+          }
+
+          // if (milestoneDisplay.stickyMat == "1") {
+          //   this.tests.push({
+          //       name: 'Sticky mat',
+          //       type: 'sticky',
+          //       selected: true
+          //     })
+          //   this.availableTests[3].selected = true
+          // }
+
+          if (milestoneDisplay.frameInspection == "1") {
+            this.tests.push({
+                name: 'Frame inspeciton',
+                type: 'frame',
+                selected: true
+              })
+            this.availableTests[3].selected = true
+          }
+
+          if (milestoneDisplay.hornetTrapping == "1") {
+            this.tests.push({
+                name: 'Asian hornet trapping',
+                type: 'hornet',
+                selected: true
+              })
+            this.availableTests[4].selected = true
+          }
+
+          // if (milestoneDisplay.hornetTrapping == "1") {
+          //   this.tests.push({
+          //       name: 'Asian hornet trapping',
+          //       type: 'hornet',
+          //       selected: true
+          //     })
+          //   this.availableTests[5].selected = true
+          // }
+
+          if (milestoneDisplay.swarmCapture == "1") {
+            this.tests.push({
+                name: 'swarm capture',
+                type: 'swarm',
+                selected: true
+              })
+            this.availableTests[5].selected = true
+          }
+
+          // if (milestoneDisplay.additionalActivities == "1") {
+          //   this.tests.push({
+          //       name: 'Additional activities',
+          //       type: 'additional',
+          //       selected: true
+          //     })
+          //   this.availableTests[7].selected = true
+          // }
+
+          
+        }
       }
     },
     methods: {
@@ -183,30 +315,31 @@ import { mapState } from 'vuex'
           "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
           "completed": true,
           "status": this.milestoneStatus,
-          "ports": true,
-          "hive": true,
-          "floral_sweep": true,
-          "catchbox": true,
-          "swarm_capture": true,
-          "hornet_trapping": true,
-          "frame_inspection": true,
-          "additional_activities": true,
+          // "ports": this.availableTests[0].selected == "1" ? true : false,
+          "hive": this.availableTests[0].selected ? "1" : "0",
+          "floral_sweep": this.availableTests[1].selected ? "1" : "0",
+          "catchbox": this.availableTests[2].selected ? "1" : "0",
+          // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
+          "frame_inspection": this.availableTests[3].selected ? "1" : "0",
+          "hornet_trapping": this.availableTests[4].selected ? "1" : "0",
+          "swarm_capture": this.availableTests[5].selected ? "1" : "0",
+          // "additional_activities": this.availableTests[7].selected ? "1" : "0",
           "date_start": this.milestoneDates.startDate,
           "date_end": this.milestoneDates.endDate,
           "extention_status": "extending",
-          "extention_start": "2019/03/28",
-          "extention_end": "2019/03/28",
+          "extention_start": this.extentionDates.startDate,
+          "extention_end": this.extentionDates.endDate,
           "extention_details": "extention_details create", 
           "agreement_id": this.$router.history.current.params.agreement
         }
 
         // let hive_id = this.$route.params.hive_id
         // if (hive_id == 'create') {
-          this.$store.dispatch('setMilestone', params)
+        //   this.$store.dispatch('setMilestone', params)
         // } else {
-        //   params = Object.assign({Id: Number(4)}, params)
-        //   console.log(params)
-        //   this.$store.dispatch('activities/updateStickyMat', params)
+          params = Object.assign({Id: this.$router.history.current.params.milestone_pk_id}, params)
+          console.log(params)
+          this.$store.dispatch('updateMilestone', params)
         // }
       }
     },
@@ -225,26 +358,10 @@ import { mapState } from 'vuex'
             email: 'jimbo@jmail.com'
           }
         ],
-        ports: [
-          {
-            portName: 'Port 523',
-            
-          },
-          {
-            portName: 'Port 524',
-            
-          },
-          {
-            portName: 'Port 525',
-            
-          }
-        ],
-        tests: [
-           
-        ],
+        tests: [],
         availableTests: [
           {
-            name: 'Hive test',
+            name: 'Hive inspeciton',
             type: 'hive',
             selected: false
           },
@@ -254,15 +371,45 @@ import { mapState } from 'vuex'
             selected: false
           },
           {
-            name: 'Sticky mat',
-            type: 'sticky',
+            name: 'Catchbox',
+            type: 'catchbox',
             selected: false
-          }
+          },
+          // {
+          //   name: 'Sticky mat',
+          //   type: 'sticky',
+          //   selected: false
+          // },
+          {
+            name: 'Frame inspection',
+            type: 'frame',
+            selected: false
+          },
+          {
+            name: 'Asian hornet trapping',
+            type: 'hornet',
+            selected: false
+          },
+          {
+            name: 'Swarm capture',
+            type: 'swarm',
+            selected: false
+          },
+          // {
+          //   name: 'Additional activities',
+          //   type: 'additional',
+          //   selected: false
+          // }
         ],
         milestoneDates: {
           startDate: '14/11/2019',
           endDate: '21/12/2019'
         },
+         extentionDates: {
+          startDate: '14/11/2019',
+          endDate: '21/12/2019'
+        },
+        extentionStatus: ""
 
     }),
     props: {

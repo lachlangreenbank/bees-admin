@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 let getToken = function () {
   // if ($cookies.get("Token")) {
-    return "3218103929154699191037069982"
+    return "9444134612138690191244065242"
 // $cookies.get("Token")
   // } else {
     // router.push('login')
@@ -87,5 +87,15 @@ export default new Vuex.Store({
 	        })
 	      .then(res => (context.commit('setCurrentMilestone', res.data, { root: true })))
 	  },
+    updateMilestone(context, Params) {
+      console.log('getting data')
+
+      axios
+        .post('http://pha-bees.sodadev.com/api/milestone/update', {
+            Token: getToken(),
+            ...Params
+          })
+        .then(res => (context.commit('setCurrentMilestone', res.data, { root: true })))
+    },
   }
 })

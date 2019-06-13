@@ -1,9 +1,9 @@
 <template>
   <v-app>
         <v-content>
-    <v-layout style="margin:0 important" fill-height wrap>
-      <v-navigation-drawer height="100%" width="180" dark permanent>
-          <v-toolbar flat>
+    <v-layout  style=" margin:0 important" fill-height wrap>
+      <v-navigation-drawer  style="background-color:#23282d" height="100%" width="180" dark permanent>
+          <v-toolbar style="background-color:#23282d" flat>
             <v-list>
               <v-list-tile>
                 <v-list-tile-title class="title">
@@ -15,10 +15,10 @@
 
           <v-divider></v-divider>
 
-          <v-list dense class="pt-0">
+          <v-list style="background-color:#23282d" dense class="pt-0">
              
             <v-list-tile
-              @click="$router.push('../../agreement-list')"
+              @click="$router.push('../../../../../../../../agreement-list')"
             >
                 <v-icon style="margin-right:10px">dashboard</v-icon>
               <v-list-tile-content>
@@ -28,7 +28,7 @@
            
           
             <v-list-tile
-              @click="$router.push('../../milestone-list')"
+              @click="$router.push('../../../../../../../../milestone-list')"
 
             >
                 <v-icon style="margin-right:10px">dashboard</v-icon>
