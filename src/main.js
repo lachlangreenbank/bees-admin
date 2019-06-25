@@ -16,7 +16,10 @@ Vue.use(Vuetify)
  
 import 'vuetify/dist/vuetify.css' // Ensure you are using css-loader
 
-
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+// set default config
+VueCookies.config('12h')
 
 Vue.config.productionTip = false
 

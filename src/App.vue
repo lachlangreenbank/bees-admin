@@ -38,7 +38,7 @@
             </v-list-tile>
             
             <!--  -->
-            <v-list-tile
+           <!--  <v-list-tile
               @click=""
               color=""
             >
@@ -46,7 +46,7 @@
               <v-list-tile-content>
                 <v-list-tile-title>Add new</v-list-tile-title>
               </v-list-tile-content>
-            </v-list-tile>
+            </v-list-tile> -->
           </v-list>
         </v-navigation-drawer>
 

@@ -2,7 +2,7 @@
   <span>
 
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs6 md12 >
+      <v-flex style="margin:10px;" xs6 md6 lg7>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           <span class="title">Agreements</span>
@@ -79,10 +79,6 @@ import { mapState } from 'vuex'
           },
         ],
         agreementList: [
-          { isActive: true, Date: '22/01/19', Title: 'Agreement 23', Author: 'Macdonald', Open: false },
-          { isActive: false, Date: '22/01/19', Title: 'Agreement 24', Author: 'Shaw', Open: false },
-          { isActive: false, Date: '22/01/19', Title: 'Agreement 25', Author: 'Wilson', Open: false },
-          { isActive: true, Date: '22/01/19', Title: 'Agreement 26', Author: 'Carney', Open: false }
         ]
     }),
     props: {

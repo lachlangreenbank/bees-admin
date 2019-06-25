@@ -25,7 +25,7 @@
               <v-layout wrap>
               <v-flex xs3>
                 <label for="exampleFormControlSelect1">Start date</label>
-                  <b-form-input
+                  <b-form-input :id="`type-date`" type="date"
                     id="input-2"
                     v-model="milestone.data[0].ms_date_start"
                     required
@@ -34,7 +34,7 @@
               </v-flex>
               <v-flex xs3>
                 <label for="exampleFormControlSelect1">End date</label>
-                  <b-form-input
+                  <b-form-input :id="`type-date`" type="date"
                     id="input-2"
                     v-model="milestone.data[0].ms_date_end"
                     required
@@ -62,19 +62,21 @@
               <v-flex xs12>
               <v-layout wrap>
               <v-flex xs3>
-                <label for="exampleFormControlSelect1">Start date</label>
-                  <b-form-input
+                <label for="exampleFormControlSelect1">Extention start date</label>
+
+                
+                  <b-form-input :id="`type-date`" type="date"
                     id="input-2"
-                    v-model="milestone.data[0].ms_date_start"
+                    v-model="extentionDates.startDate"
                     required
                     placeholder="Start date"
                   ></b-form-input>
               </v-flex>
               <v-flex xs3>
-                <label for="exampleFormControlSelect1">End date</label>
-                  <b-form-input
+                <label for="exampleFormControlSelect1">Extention end date</label>
+                  <b-form-input :id="`type-date`" type="date"<b-form-input :id="`type-date`" type="date"
                     id="input-2"
-                    v-model="milestone.data[0].ms_date_end"
+                    v-model="extentionDates.endDate"
                     required
                     placeholder="Start date"
                   ></b-form-input>
@@ -111,7 +113,7 @@
               </b-list-group>
           </v-flex>
          </v-layout>
-<!--          <v-flex xs12>
+         <v-flex xs12>
             <label for="exampleFormControlSelect1">Users</label>
           </v-flex>
       
@@ -122,7 +124,7 @@
             </b-list-group>
           </v-flex>         
        
-         <v-flex xs12>
+         <!-- <v-flex xs12>
             <label for="exampleFormControlSelect1">Ports</label>
           </v-flex>
      
@@ -204,7 +206,7 @@ import { mapState } from 'vuex'
             stickyMat: this.milestone.data[0].ms_sticky_mat,
             frameInspection:this.milestone.data[0]. ms_frame_inspection,
             hornetTrapping: this.milestone.data[0].ms_hornet_trapping,
-            swarmCapture: this.milestone.data[0].ms_swarm_capture,
+            // swarmCapture: this.milestone.data[0].ms_swarm_capture,
            
             additionalActivities: this.milestone.data[0].ms_additional_activities
           } 
@@ -284,14 +286,14 @@ import { mapState } from 'vuex'
             this.availableTests[5].selected = true
           }
 
-          // if (milestoneDisplay.additionalActivities == "1") {
-          //   this.tests.push({
-          //       name: 'Additional activities',
-          //       type: 'additional',
-          //       selected: true
-          //     })
-          //   this.availableTests[7].selected = true
-          // }
+          if (milestoneDisplay.additionalActivities == "1") {
+            this.tests.push({
+                name: 'Additional activities',
+                type: 'additional',
+                selected: true
+              })
+            this.availableTests[6].selected = true
+          }
 
           
         }
@@ -323,7 +325,7 @@ import { mapState } from 'vuex'
           "frame_inspection": this.availableTests[3].selected ? "1" : "0",
           "hornet_trapping": this.availableTests[4].selected ? "1" : "0",
           "swarm_capture": this.availableTests[5].selected ? "1" : "0",
-          // "additional_activities": this.availableTests[7].selected ? "1" : "0",
+          "additional_activities": this.availableTests[6].selected ? "1" : "0",
           "date_start": this.milestoneDates.startDate,
           "date_end": this.milestoneDates.endDate,
           "extention_status": "extending",
@@ -395,19 +397,19 @@ import { mapState } from 'vuex'
             type: 'swarm',
             selected: false
           },
-          // {
-          //   name: 'Additional activities',
-          //   type: 'additional',
-          //   selected: false
-          // }
+          {
+            name: 'Additional activities',
+            type: 'additional',
+            selected: false
+          }
         ],
         milestoneDates: {
-          startDate: '14/11/2019',
-          endDate: '21/12/2019'
+          startDate: '2019/12/11',
+          endDate: '2019/12/12'
         },
-         extentionDates: {
-          startDate: '14/11/2019',
-          endDate: '21/12/2019'
+        extentionDates: {
+          startDate: '2019/12/11',
+          endDate: '2019/12/12'
         },
         extentionStatus: ""
 

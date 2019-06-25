@@ -7,12 +7,11 @@ import router from '@/router'
 Vue.use(Vuex)
 
 let getToken = function () {
-  // if ($cookies.get("Token")) {
-    return "9444134612138690191244065242"
-// $cookies.get("Token")
-  // } else {
-    // router.push('login')
-  // }
+  if ($cookies.get("Token")) {
+    return $cookies.get("Token")
+  } else {
+    router.push('../../../../../../../login')
+  }
 }
 
 export default new Vuex.Store({
@@ -25,6 +24,12 @@ export default new Vuex.Store({
   	milestoneCreateStatus: false
   },
   mutations: {
+    setUser (state, user) {
+      console.log(user)
+      state.user = user
+      $cookies.set("user", user)
+      return user
+    },
   	setAgreements (state, agreements) {
       console.log(agreements)
       state.agreements = agreements
@@ -48,15 +53,33 @@ export default new Vuex.Store({
   	},
   },
   actions: {
+    login(context, Params) {
+      console.log('getting data')
+      var config = {
+          headers: {}
+      };
+
+      axios
+        .post('http://pha-bees.sodadev.com/api/user/validate', {
+            Token: "7650307942108497196214049692",
+            User_Email: "Officer01@gmail.com",
+            User_Password: "Officer01@gmail.com"
+          }, config)
+        .then(res => (context.commit('setUser', res.data, { root: true })))
+    },
   	getAgreements(context, Params) {
 	    console.log('getting data')
-
-	    axios
-	      .post('http://pha-bees.sodadev.com/api/agreement/single', {
-	          Token: getToken(),
-	          Id: 55 // Params.Id 
-	        })
-	      .then(res => (context.commit('setAgreements', res.data, { root: true })))
+      return new Promise(function(resolve, reject) {
+  	    axios
+  	      .post('http://pha-bees.sodadev.com/api/agreement/single', {
+  	          Token: getToken(),
+  	          Id: 55 // Params.Id 
+  	        })
+          .then(function (res) {
+            (context.commit('setAgreements', res.data, { root: true }))
+            resolve(res)
+          })
+        })
 	  },
 	  getMilestone(context, Params) {
 	    console.log('getting data')
@@ -71,11 +94,16 @@ export default new Vuex.Store({
 	  getMilestones(context, Params) {
 	    console.log('getting data')
 
-	    axios
-	      .post('http://pha-bees.sodadev.com/api/milestone/all', {
-	          Token: getToken(),
-	        })
-	      .then(res => (context.commit('setMilestones', res.data, { root: true })))
+      return new Promise(function(resolve, reject) {
+  	    axios
+  	      .post('http://pha-bees.sodadev.com/api/milestone/all', {
+  	          Token: getToken(),
+  	        })
+          .then(function (res) {
+            (context.commit('setMilestones', res.data, { root: true }))
+            resolve(res)
+          })
+        })
 	  },
 	  setMilestone(context, Params) {
 	    console.log('getting data')

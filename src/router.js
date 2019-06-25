@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from './components/Login'
 import MilestoneList from './views/MilestoneList'
 import MilestoneDetail from './views/MilestoneDetail'
 import AgreementList from './views/AgreementList'
@@ -13,8 +14,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'milestoneList',
-      component: MilestoneList
+      name: 'login',
+      component: Login
     },
     {
       path: '/milestone-list',
