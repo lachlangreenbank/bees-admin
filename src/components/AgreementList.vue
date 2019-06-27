@@ -5,9 +5,10 @@
       <v-flex style="margin:10px;" xs6 md6 lg7>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
-          <span class="title">Agreements</span>
+          
               <v-flex>
                 <v-card style="padding:20px;" color="white">
+                  <v-card-title   class="title">All agreeements</v-card-title>
                   <div>
                   <b-table class="agreement-list" hover :items="agreements.data" :fields="agreementListFields">
                     <template slot="Open" slot-scope="row">
@@ -37,7 +38,7 @@ import { mapState } from 'vuex'
 
   export default {
     created: function () {
-      this.$store.dispatch('getAgreements')
+      this.$store.dispatch('getAllAgreements')
     },
     components: {
       

@@ -73,7 +73,7 @@ export default new Vuex.Store({
   	    axios
   	      .post('http://pha-bees.sodadev.com/api/agreement/single', {
   	          Token: getToken(),
-  	          Id: 55 // Params.Id 
+  	          ...Params
   	        })
           .then(function (res) {
             (context.commit('setAgreements', res.data, { root: true }))
@@ -81,6 +81,23 @@ export default new Vuex.Store({
           })
         })
 	  },
+    getAllAgreements(context, Params) {
+      console.log('getting data')
+      var config = {
+          headers: {}
+      };
+
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/agreement/all', {
+              Token: getToken(), 
+            }, config)
+          .then(function (res) {
+            (context.commit('setAgreements', res.data, { root: true }))
+            resolve(res)
+          })
+        })
+    },
 	  getMilestone(context, Params) {
 	    console.log('getting data')
 

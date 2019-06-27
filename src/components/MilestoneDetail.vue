@@ -1,16 +1,18 @@
 
 <template>
   <span>
-    <v-container  grid-list-xl>
-      <v-layout v-if="milestone.data" text-xs-left  wrap v-bind="binding">
-        <v-flex>
+    <v-layout style="margin:0 important" fill-height wrap>
+      <v-flex style="margin:10px;" xs6 md6 lg7>
+        <v-container  grid-list-xl>
+          <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
-            <v-card-title   class="title"></v-card-title>
+            <v-card-title   class="title">Milestone {{milestone.data[0].ms_Id}}</v-card-title>
             <!-- <b-input-group size="lg" prepend="$" append=".00">
           <b-form-input></b-form-input>
         </b-input-group> -->
           <v-flex xs3>
             <label for="exampleFormControlSelect1">Milestone status</label>
+            {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
               <option>created</option>
               <option>Pending</option>
@@ -64,7 +66,7 @@
               <v-flex xs3>
                 <label for="exampleFormControlSelect1">Extention start date</label>
 
-                
+
                   <b-form-input :id="`type-date`" type="date"
                     id="input-2"
                     v-model="extentionDates.startDate"
@@ -146,9 +148,10 @@
           </v-flex>
       
           </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+          </v-layout>
+        </v-container>
+      </v-flex>
+    </v-layout>
   </span>
 </template>
 
@@ -166,6 +169,7 @@ import { mapState } from 'vuex'
       
     },
     created: function () {
+
       this.$store.dispatch('getMilestone', {Id: this.$router.history.current.params.milestone_pk_id})
     },
     computed: {
@@ -187,14 +191,14 @@ import { mapState } from 'vuex'
       },
       milestone: function  () {
         console.log(this.milestone)
-        this.milestoneDates.startDate = this.milestone.ms_date_start
-        this.milestoneDates.endDate = this.milestone.ms_date_end
+        this.milestoneDates.startDate = this.milestone.data[0].ms_date_start
+        this.milestoneDates.endDate = this.milestone.data[0].ms_date_end
 
-         this.extentionDates.startDate = this.milestone.ms_extention_start
-         this.extentionDates.endDate = this.milestone.ms_extention_end
+         this.extentionDates.startDate = this.milestone.data[0].ms_extention_start
+         this.extentionDates.endDate = this.milestone.data[0].ms_extention_end
 
-        this.milestoneStatus = this.milestone.ms_status
-        this.extentionStatus = this.milestone.ms_extention_status
+        this.milestoneStatus = this.milestone.data[0].ms_status
+        this.extentionStatus = this.milestone.data[0].ms_extention_status
 
         if (this.milestone.data) {
           let milestoneDisplay = {

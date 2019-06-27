@@ -1,27 +1,26 @@
 <template>
   <span>
-
     <v-layout style="margin:0 important" fill-height wrap>
       <v-flex style="margin:10px;" xs6 md6 lg7>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
-          <span class="title">Milestones</span>
               <v-flex>
                 <v-card style="padding:20px;" color="white">
+                  <v-card-title   class="title">Agreeement {{agreement.agreement_id}}</v-card-title>
                   <div>
-                  <b-table class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
+                  <b-table v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="display = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
-                      <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.ms_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
+                      <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
                     </template>
-                </b-table>
-              </div>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout> 
+                  </b-table>
+                </div>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-flex>
+    </v-layout> 
   </span>
 </template>
 
@@ -38,9 +37,10 @@
       // this.$store.dispatch('getAgreements')
       let self = this
 
+
       Promise.all([
         self.$store.dispatch('getMilestones'),
-        self.$store.dispatch('getAgreements'),
+        self.$store.dispatch('getAgreements', {Id: self.$router.history.current.params.agreement}),
       ]).then(function(values) {
         console.log(values)
 
@@ -48,33 +48,17 @@
         const milestones = self.milestones.filter(
           ms => ms.ms_agreement_id == self.$router.history.current.params.agreement
         );
-        self.agreements = values[1].data.data
-        const agreement = self.agreements.filter(
-          ag => ag.agreement_id == self.$router.history.current.params.agreement
-        );
-        console.log(agreement)
+
+        self.agreement = values[1].data.data[0]
+        console.log(self.agreement)
+        const agreement = values[1].data.data[0]
         
         // If 6 milestones dont exist for this agreement, go create missing ones
         if (milestones.length < 6) {
-          self.fillEmptyMilestones(milestones, agreement[0])
+          self.fillEmptyMilestones(milestones, agreement)
         }
-        // Sorting milestones to ascending order
-        let splitContextId = function (string) {return string.split('-');}
-        milestones.sort(function(a, b) {
-          a = splitContextId(a.ms_context_id)
-          b = splitContextId(b.ms_context_id)
-          
-          return a[1] - b[1];
-        });
-        milestones.forEach((milestone, i) => {
-          milestone = {
-            ...milestone, 
-            Open: false,
-            formattedContextId: 'Agreement ' + splitContextId(milestone.ms_context_id)[0] + ' part ' + splitContextId(milestone.ms_context_id)[1] + ' Milestone ' + milestone.ms_Id
-          }
-          self.filteredMilestones.push(milestone) 
-        });
         console.log( self.filteredMilestones)
+        self.ready = true
       })
     },
     components: {
@@ -83,22 +67,78 @@
 
     computed: {
       ...mapState({
-        rawMilestones: state => state.milestones,
-        rawAgreements: state => state.agreements,
+        milestones: state => state.milestones,
+        agreements: state => state.agreements,
       }),
-      binding () {
+      binding: function () {
         const binding = {}
 
         if (this.$vuetify.breakpoint.mdAndUp) binding.column = true
 
         return binding
+      },
+      trimPrependedAbbrev: function (myOriginalString) {
+        return myOriginalString.substring(3);
       }
     },
     watch: {
+      milestones: function  () {
+        let self = this
+        console.log(this.milestones)
+        self.milestones = this.milestones
+        const milestones = self.milestones.filter(
+          ms => ms.ms_agreement_id == self.$router.history.current.params.agreement
+        );
+        let splitContextId = function (string) {return string.split('-');}
+        milestones.sort(function(a, b) {
+          a = splitContextId(a.ms_context_id)
+          b = splitContextId(b.ms_context_id)
+          
+          return a[1] - b[1];
+        });
+
+        milestones.forEach((milestone, i) => {
+          milestone = self.renameKeys(milestone)
+          console.log(milestone)
+          milestone = {
+            ...milestone, 
+            Open: false,
+            Agreement_id: 'Agreement ' + splitContextId(milestone.context_id)[0] + ' part ' + splitContextId(milestone.context_id)[1]
+          }
+          self.filteredMilestones.push(milestone) 
+        });
+      }
     },
     methods: {
+      // This function prims the ugly 'ms_' of the fields just for the displaying in the list
+      renameKeys: function (obj) {
+        let keysMap = {
+          ms_Id: 'milestone_Id',
+          ms_additional_activities: 'additional_activities', 
+          ms_agreement_id: 'agreement_id', 
+          ms_catchbox: 'catchbox', 
+          ms_completed: 'completed', 
+          ms_context_id: 'context_id', 
+          ms_date_end: 'date_end', 
+          ms_date_start: 'date_start', 
+          ms_extention_details: 'extention_details', 
+          ms_extention_end: 'extention_end', 
+          ms_extention_start: 'extention_start', 
+          ms_extention_status: 'extention_status', 
+          ms_floral_sweep: 'floral_sweep', 
+          ms_frame_inspection: 'frame_inspection', 
+          ms_hive: 'hive', 
+          ms_hornet_trapping: 'hornet_trapping', 
+          ms_ports: 'ports', 
+          ms_status: 'status', 
+          ms_swarm_capture: 'swarm_capture', 
+        }
+        let cleanNames = Object.keys(obj) .reduce((acc, key) => ({ ...acc, ...{ [keysMap[key] || key]: obj[key] }    }), {})
+        return cleanNames
+        
+      },
 
-      fillEmptyMilestones(milestones, agreement) {
+      fillEmptyMilestones: function(milestones, agreement) {
         let self = this
         let setMilestone = function (context_id, start_date, end_date) {
           let params = {
@@ -128,18 +168,25 @@
 
         let i = 1
         for (i; i <= 6; i++) {
+          this.ready =false
           if (!milestones[i-1]) {
             console.log(i)
             let context_id = self.$router.history.current.params.agreement + '-' + i;
 
             // Calculate the general milestone dates using the agreement start date
-            let agreement_start_date = new Date(agreement.agreement_start_date);
+            console.log(agreement.agreement_start_date)
 
-            let milestone_start = new Date(agreement.agreement_start_date)
-            milestone_start.setDate(agreement_start_date.getDate()+(7*(i-1)));
+            var dateParts = agreement.agreement_start_date.split("/");
+            var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]); 
 
-            let milestone_end = new Date(agreement.agreement_start_date)
-            milestone_end.setDate(agreement_start_date.getDate()+(7*i));
+            let agreement_start_date = new Date(dateObject);
+            console.log(agreement_start_date)
+
+            let milestone_start = new Date(dateObject)
+            milestone_start.setDate(dateObject.getDate()+(7*(i-1)));
+
+            let milestone_end = new Date(dateObject)
+            milestone_end.setDate(dateObject.getDate()+(7*i));
 
             // console.log(agreement_start_date)
 
@@ -161,28 +208,40 @@
               getFormattedDate(milestone_end)
             )
           }
+          // if (i == 6) {
+          //   window.location.reload()
+
+
+          // }
+            
         }
       }
     },
     data: () => ({
+      agreement: {},
+      ready: false,
         milestones: [],
         agreements: [],
         milestoneListFields: [
           
           {
-            key: 'formattedContextId',
+            key: 'Agreement_id',
             sortable: true
           },
           {
-            key: 'ms_status',
+            key: 'milestone_Id',
             sortable: true
           },
           {
-            key: 'ms_date_start',
+            key: 'status',
             sortable: true
           },
           {
-            key: 'ms_date_end',
+            key: 'date_start',
+            sortable: true
+          },
+          {
+            key: 'date_end',
             sortable: true
           },
           {
