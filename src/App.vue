@@ -25,17 +25,6 @@
                 <v-list-tile-title>Agreements</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-           
-          
-            <v-list-tile
-              @click="$router.push('../../../../../../../../milestone-list')"
-
-            >
-                <v-icon style="margin-right:10px">dashboard</v-icon>
-              <v-list-tile-content>
-                <v-list-tile-title>Milestones</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
             
             <!--  -->
            <!--  <v-list-tile

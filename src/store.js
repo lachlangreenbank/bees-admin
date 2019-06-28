@@ -125,12 +125,17 @@ export default new Vuex.Store({
 	  setMilestone(context, Params) {
 	    console.log('getting data')
 
-	    axios
-	      .post('http://pha-bees.sodadev.com/api/milestone/create', {
-	          Token: getToken(),
-	          ...Params
-	        })
-	      .then(res => (context.commit('setCurrentMilestone', res.data, { root: true })))
+      return new Promise(function(resolve, reject) {
+  	    axios
+  	      .post('http://pha-bees.sodadev.com/api/milestone/create', {
+  	          Token: getToken(),
+  	          ...Params
+  	        })
+  	      .then(function (res) {
+            (context.commit('setCurrentMilestone', res.data, { root: true }))
+            resolve(res)
+          })
+        })
 	  },
     updateMilestone(context, Params) {
       console.log('getting data')

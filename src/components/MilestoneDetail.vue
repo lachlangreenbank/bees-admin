@@ -2,15 +2,15 @@
 <template>
   <span>
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs6 md6 lg7>
+      <v-flex style="margin:10px;" xs12 md12 lg7>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
-            <v-card-title   class="title">Milestone {{milestone.data[0].ms_Id}}</v-card-title>
+            <v-card-title   class="title">Agreement {{$router.history.current.params.agreement}} Milestone {{$router.history.current.params.milestone_id}}</v-card-title>
             <!-- <b-input-group size="lg" prepend="$" append=".00">
           <b-form-input></b-form-input>
         </b-input-group> -->
-          <v-flex xs3>
+          <v-flex xs6>
             <label for="exampleFormControlSelect1">Milestone status</label>
             {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
@@ -25,7 +25,7 @@
          
             <v-flex xs12>
               <v-layout wrap>
-              <v-flex xs3>
+              <v-flex xs6>
                 <label for="exampleFormControlSelect1">Start date</label>
                   <b-form-input :id="`type-date`" type="date"
                     id="input-2"
@@ -34,7 +34,7 @@
                     placeholder="Start date"
                   ></b-form-input>
               </v-flex>
-              <v-flex xs3>
+              <v-flex xs6>
                 <label for="exampleFormControlSelect1">End date</label>
                   <b-form-input :id="`type-date`" type="date"
                     id="input-2"
@@ -48,7 +48,7 @@
 
 
 
-              <v-flex xs3>
+              <v-flex xs6>
             <label for="exampleFormControlSelect1">Extention status</label>
             <select v-model="extentionStatus" class="form-control" id="exampleFormControlSelect1">
               <option>Pending</option>
@@ -63,7 +63,7 @@
 
               <v-flex xs12>
               <v-layout wrap>
-              <v-flex xs3>
+              <v-flex xs6>
                 <label for="exampleFormControlSelect1">Extention start date</label>
 
 
@@ -74,7 +74,7 @@
                     placeholder="Start date"
                   ></b-form-input>
               </v-flex>
-              <v-flex xs3>
+              <v-flex xs6>
                 <label for="exampleFormControlSelect1">Extention end date</label>
                   <b-form-input :id="`type-date`" type="date"<b-form-input :id="`type-date`" type="date"
                     id="input-2"
@@ -91,7 +91,7 @@
             <label for="exampleFormControlSelect1">Select tests</label>
           </v-flex>
           <v-layout style="margin-left:2px;">  
-            <v-flex xs3>
+            <v-flex xs6>
               <b-list-group>
                 <label for="exampleFormControlSelect1">Available tests</label>
               <b-list-group-item v-bind:style= "[test.selected ? {'background-color':'silver !important', 'color':'white !important'} : {}]" :disabled="test.selected" v-for="(test, i) in availableTests" @click="addTest(test, i)" style="cursor:pointer">
@@ -100,7 +100,7 @@
                
             </b-list-group>
           </v-flex>
-              <v-flex xs3>
+              <v-flex xs6>
               <b-list-group v-if="tests.length > 0">
                 <label for="exampleFormControlSelect1">Selected tests</label>
                 <b-list-group-item v-for="(test, i) in tests">{{test.name}}
@@ -114,17 +114,7 @@
                 </b-list-group-item>
               </b-list-group>
           </v-flex>
-         </v-layout>
-         <v-flex xs12>
-            <label for="exampleFormControlSelect1">Users</label>
-          </v-flex>
-      
-            <v-flex xs3>
-              <b-list-group>
-              <b-list-group-item disabled v-for="(user, i) in users">{{user.email}}</b-list-group-item>
-               
-            </b-list-group>
-          </v-flex>         
+         </v-layout>     
        
          <!-- <v-flex xs12>
             <label for="exampleFormControlSelect1">Ports</label>
@@ -138,11 +128,11 @@
           </v-flex>
  -->
           <v-flex xs12 d-flex>
-            <v-flex xs2>
+            <v-flex xs6>
               <v-btn outline @click="$router.go(-1)" flat> Cancel</v-btn>
             </v-flex>
           
-            <v-flex xs2>
+            <v-flex xs6>
               <v-btn outline @click="updateMilestone()" v-bind:style= "[updated == 'updated' ? {'background-color':'green !important', 'color':'white !important'} : {}]" flat> {{updated}}</v-btn>
               </v-flex>
           </v-flex>

@@ -1,8 +1,8 @@
 <template>
   <span>
 
-    <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs6 md6 lg7>
+    <v-layout align-left style="margin:0 important" fill-height wrap>
+      <v-flex style="margin:10px;" xs12 md6 lg6>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           
@@ -11,6 +11,13 @@
                   <v-card-title   class="title">All agreeements</v-card-title>
                   <div>
                   <b-table class="agreement-list" hover :items="agreements.data" :fields="agreementListFields">
+
+                    <template slot="agreement_start_date" slot-scope="row">
+                      <span v-if="row.item.agreement_start_date">{{row.item.agreement_start_date}}</span>
+                      <span v-else="row.item.agreement_start_date">Set a start date in wordpress before opening</span>
+                    </template>
+
+
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="display = 'agreementDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'agreement-milestones/' + row.item.agreement_id" v-if="!row.item.Open"  @click=" row.item.Open = true" small outline>open</v-btn>

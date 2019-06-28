@@ -1,19 +1,27 @@
 <template>
   <span>
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs6 md6 lg7>
+      <v-flex style="margin:10px;" xs12 md9 lg7>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
               <v-flex>
                 <v-card style="padding:20px;" color="white">
                   <v-card-title   class="title">Agreeement {{agreement.agreement_id}}</v-card-title>
                   <div>
-                  <b-table v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
+                  <b-table :sort-by="'date_start'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="display = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
                     </template>
                   </b-table>
+
+                  <v-flex xs12 v-if="!display && !timeout">
+                    <v-progress-linear
+                      indeterminate
+                      color="yellow darken-2"
+                    ></v-progress-linear>
+                  </v-flex>
+                  <v-btn :key="timeout" v-if="!ready && timeout" @click="reload()">Initialize agreement</v-btn>
                 </div>
               </v-card>
             </v-flex>
@@ -33,10 +41,7 @@
 
   export default {
     created: function () {
-      // this.$store.dispatch('getMilestones')
-      // this.$store.dispatch('getAgreements')
       let self = this
-
 
       Promise.all([
         self.$store.dispatch('getMilestones'),
@@ -60,6 +65,10 @@
         console.log( self.filteredMilestones)
         self.ready = true
       })
+
+      setTimeout(function  () {
+        self.timeout = true
+      },1000)
     },
     components: {
       MilestoneDetail
@@ -90,11 +99,11 @@
           ms => ms.ms_agreement_id == self.$router.history.current.params.agreement
         );
         let splitContextId = function (string) {return string.split('-');}
+
         milestones.sort(function(a, b) {
           a = splitContextId(a.ms_context_id)
           b = splitContextId(b.ms_context_id)
-          
-          return a[1] - b[1];
+          return a[1] + b[1];
         });
 
         milestones.forEach((milestone, i) => {
@@ -103,13 +112,16 @@
           milestone = {
             ...milestone, 
             Open: false,
-            Agreement_id: 'Agreement ' + splitContextId(milestone.context_id)[0] + ' part ' + splitContextId(milestone.context_id)[1]
+            Agreement_id: 'Milestone ' + splitContextId(milestone.context_id)[1]
           }
           self.filteredMilestones.push(milestone) 
         });
       }
     },
     methods: {
+      reload: function () {
+        window.location.reload()
+      },
       // This function prims the ugly 'ms_' of the fields just for the displaying in the list
       renameKeys: function (obj) {
         let keysMap = {
@@ -138,31 +150,38 @@
         
       },
 
-      fillEmptyMilestones: function(milestones, agreement) {
+      fillEmptyMilestones: async function(milestones, agreement) {
         let self = this
         let setMilestone = function (context_id, start_date, end_date) {
-          let params = {
-            "context_id": context_id,
-            "completed": false,
-            "status": 'created',
-            // "ports": this.availableTests[0].selected == "1" ? true : false,
-            "hive": "1",
-            "floral_sweep": "1",
-            "catchbox": "1",
-            // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
-            "frame_inspection": "0",
-            "hornet_trapping": "0",
-            "swarm_capture": "0",
-            // "additional_activities": this.availableTests[7].selected ? "1" : "0",
-            "date_start":  start_date,
-            "date_end": end_date,
-            "extention_status": "0",
-            "extention_start": "0000/00/00",
-            "extention_end": "0000/00/00",
-            "extention_details": "extention_details create", 
-            "agreement_id": self.$router.history.current.params.agreement
-          }
-          self.$store.dispatch('setMilestone', params)
+          return new Promise(function(resolve, reject) {
+        
+            let params = {
+              "context_id": context_id,
+              "completed": false,
+              "status": 'created',
+              // "ports": this.availableTests[0].selected == "1" ? true : false,
+              "hive": "1",
+              "floral_sweep": "1",
+              "catchbox": "1",
+              // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
+              "frame_inspection": "0",
+              "hornet_trapping": "0",
+              "swarm_capture": "0",
+              // "additional_activities": this.availableTests[7].selected ? "1" : "0",
+              "date_start":  start_date,
+              "date_end": end_date,
+              "extention_status": "0",
+              "extention_start": "0000/00/00",
+              "extention_end": "0000/00/00",
+              "extention_details": "extention_details create", 
+              "agreement_id": self.$router.history.current.params.agreement
+            }
+
+
+            self.$store.dispatch('setMilestone', params)
+            .then(console.log())
+            .then(resolve(true))
+          })
         }
           
 
@@ -174,7 +193,6 @@
             let context_id = self.$router.history.current.params.agreement + '-' + i;
 
             // Calculate the general milestone dates using the agreement start date
-            console.log(agreement.agreement_start_date)
 
             var dateParts = agreement.agreement_start_date.split("/");
             var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]); 
@@ -183,7 +201,7 @@
             console.log(agreement_start_date)
 
             let milestone_start = new Date(dateObject)
-            milestone_start.setDate(dateObject.getDate()+(7*(i-1)));
+            milestone_start.setDate(dateObject.getDate()+(7*(i-1))+1);
 
             let milestone_end = new Date(dateObject)
             milestone_end.setDate(dateObject.getDate()+(7*i));
@@ -197,27 +215,18 @@
 
               return year + "/" + month + "/" + day;
             }
-            console.log(getFormattedDate(milestone_start))
-            console.log(getFormattedDate(milestone_end))
-             
 
-
-            setMilestone(
+            await setMilestone(
               context_id, 
               getFormattedDate(milestone_start), 
               getFormattedDate(milestone_end)
             )
-          }
-          // if (i == 6) {
-          //   window.location.reload()
-
-
-          // }
-            
+          } 
         }
       }
     },
     data: () => ({
+      timeout: false,
       agreement: {},
       ready: false,
         milestones: [],
@@ -226,10 +235,6 @@
           
           {
             key: 'Agreement_id',
-            sortable: true
-          },
-          {
-            key: 'milestone_Id',
             sortable: true
           },
           {
