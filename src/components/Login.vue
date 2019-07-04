@@ -59,9 +59,7 @@
     },
     watch: {
       user: function  () {
-        this.$cookies.set("Token", this.user.Token)
-          // console.log(this.$cookies.get("user_session"))
-        this.$router.push('agreement-list')
+        console.log(this.user.Token)
       }
     },
     methods: {

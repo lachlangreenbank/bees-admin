@@ -6,7 +6,7 @@
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
-            <v-card-title   class="title">Agreement {{$router.history.current.params.agreement}} Milestone {{$router.history.current.params.milestone_id}}</v-card-title>
+            <v-card-title   class="title">Milestone {{$router.history.current.params.milestone_id}} <span style="color:gray; font-size:14px">- {{agreements.data[0].agreement_name}}</span></v-card-title>
             <!-- <b-input-group size="lg" prepend="$" append=".00">
           <b-form-input></b-form-input>
         </b-input-group> -->
@@ -15,7 +15,7 @@
             {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
               <option>created</option>
-              <option>Pending</option>
+              <option>Pending review</option>
               <option>In progress</option>
               <option>Overdue</option>
               <option>Overdue/Extended</option>
@@ -83,6 +83,13 @@
                     placeholder="Start date"
                   ></b-form-input>
               </v-flex>
+
+              <b-form-textarea
+                id="textarea"
+                v-model="extentionDetails"
+                placeholder="Notes about extention"
+                rows="3"
+              ></b-form-textarea>
             </v-layout>
              </v-flex>
          
@@ -128,15 +135,23 @@
           </v-flex>
  -->
           <v-flex xs12 d-flex>
-            <v-flex xs6>
+            <v-flex xs4>
+              <v-btn outline @click="getMilestoneLogs()" flat> View logs</v-btn>
+            </v-flex>
+            <v-flex xs4>
               <v-btn outline @click="$router.go(-1)" flat> Cancel</v-btn>
             </v-flex>
           
-            <v-flex xs6>
+            <v-flex xs4>
               <v-btn outline @click="updateMilestone()" v-bind:style= "[updated == 'updated' ? {'background-color':'green !important', 'color':'white !important'} : {}]" flat> {{updated}}</v-btn>
               </v-flex>
-          </v-flex>
+            </v-flex>
       
+          </v-card>
+
+          <v-card>
+            <b-table v-if="milestoneLogs.data" :sort-by="'date_start'"  class="milestone-list" hover :items="[renameKeys(milestoneLogs.data[0])]" :fields="milestoneLogsFields">
+            </b-table>
           </v-card>
           </v-layout>
         </v-container>
@@ -159,13 +174,16 @@ import { mapState } from 'vuex'
       
     },
     created: function () {
-
+      this.$store.dispatch('getAgreements', {Id: this.$router.history.current.params.agreement_id})
+      .then(res => console.log(res))
       this.$store.dispatch('getMilestone', {Id: this.$router.history.current.params.milestone_pk_id})
     },
     computed: {
       ...mapState({
+        agreements: state => state.agreements,
         milestoneCreateStatus: state => state.milestoneCreateStatus,
         milestone: state => state.milestone,
+        milestoneLogs: state => state.milestoneLogs,
       }),
       binding () {
         const binding = {}
@@ -190,6 +208,8 @@ import { mapState } from 'vuex'
         this.milestoneStatus = this.milestone.data[0].ms_status
         this.extentionStatus = this.milestone.data[0].ms_extention_status
 
+        this.extentionDetails = this.milestone.data[0].ms_extention_details
+
         if (this.milestone.data) {
           let milestoneDisplay = {
             // startDate: ms_date_start,
@@ -200,7 +220,7 @@ import { mapState } from 'vuex'
             stickyMat: this.milestone.data[0].ms_sticky_mat,
             frameInspection:this.milestone.data[0]. ms_frame_inspection,
             hornetTrapping: this.milestone.data[0].ms_hornet_trapping,
-            // swarmCapture: this.milestone.data[0].ms_swarm_capture,
+            swarmCapture: this.milestone.data[0].ms_swarm_capture,
            
             additionalActivities: this.milestone.data[0].ms_additional_activities
           } 
@@ -291,6 +311,9 @@ import { mapState } from 'vuex'
 
           
         }
+      },
+      agreements: function  () {
+        console.log(this.agreements)
       }
     },
     methods: {
@@ -307,11 +330,11 @@ import { mapState } from 'vuex'
         }
       },
       updateMilestone () {
+        let self = this
         let params = {
           "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
-          "completed": true,
+          "completed": '0',
           "status": this.milestoneStatus,
-          // "ports": this.availableTests[0].selected == "1" ? true : false,
           "hive": this.availableTests[0].selected ? "1" : "0",
           "floral_sweep": this.availableTests[1].selected ? "1" : "0",
           "catchbox": this.availableTests[2].selected ? "1" : "0",
@@ -325,23 +348,50 @@ import { mapState } from 'vuex'
           "extention_status": "extending",
           "extention_start": this.extentionDates.startDate,
           "extention_end": this.extentionDates.endDate,
-          "extention_details": "extention_details create", 
-          "agreement_id": this.$router.history.current.params.agreement
+          "extention_details": this.extentionDetails, 
+          // "agreement_id": this.$router.history.current.params.agreement
         }
 
-        // let hive_id = this.$route.params.hive_id
-        // if (hive_id == 'create') {
-        //   this.$store.dispatch('setMilestone', params)
-        // } else {
-          params = Object.assign({Id: this.$router.history.current.params.milestone_pk_id}, params)
-          console.log(params)
-          this.$store.dispatch('updateMilestone', params)
-        // }
-      }
+        params = Object.assign({Id: this.$router.history.current.params.milestone_pk_id}, params)
+        console.log(params)
+        this.$store.dispatch('updateMilestone', params)
+        .then(self.$store.dispatch('createMilestoneLog', params))
+        
+      },
+      getMilestoneLogs: function  () {
+        this.$store.dispatch('getMilestoneLogs', {Context_Id: this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id})
+      },
+      renameKeys: function (obj) {
+        let keysMap = {
+          msl_Id: 'milestone_Id',
+          msl_additional_activities: 'additional_activities', 
+          msl_agreement_id: 'agreement_id', 
+          msl_catchbox: 'catchbox', 
+          msl_completed: 'completed', 
+          msl_context_id: 'context_id', 
+          msl_date_end: 'date_end', 
+          msl_date_start: 'date_start', 
+          msl_extention_details: 'extention_details', 
+          ms_extention_end: 'extention_end', 
+          msl_extention_start: 'extention_start', 
+          msl_extention_status: 'extention_status', 
+          msl_floral_sweep: 'floral_sweep', 
+          msl_frame_inspection: 'frame_inspection', 
+          msl_hive: 'hive', 
+          msl_hornet_trapping: 'hornet_trapping', 
+          msl_ports: 'ports', 
+          msl_status: 'status', 
+          msl_swarm_capture: 'swarm_capture', 
+        }
+        let cleanNames = Object.keys(obj) .reduce((acc, key) => ({ ...acc, ...{ [keysMap[key] || key]: obj[key] }    }), {})
+        return cleanNames
+        
+      },
     },
     data: () => ({
         updated: 'Update',
         milestoneStatus: 'Pending',
+        extentionDetails: '',
         items: [
           { title: 'Milestones', icon: 'dashboard' },
         ],
@@ -405,8 +455,84 @@ import { mapState } from 'vuex'
           startDate: '2019/12/11',
           endDate: '2019/12/12'
         },
-        extentionStatus: ""
+        extentionStatus: "",
 
+
+
+
+        // 
+        // Logs
+
+        milestoneLogsFields: [
+          {
+            key: "context_id",
+            sortable: true
+          },
+          {
+            key: "completed",
+            sortable: true
+          },
+          {
+            key: "status",
+            sortable: true
+          },
+          {
+            key: "hive",
+            sortable: true
+          },
+          {
+            key: "floral_sweep",
+            sortable: true
+          },
+          {
+            key: "catchbox",
+            sortable: true
+          },
+          {
+            key: "frame_inspection",
+            sortable: true
+          },
+          {
+            key: "hornet_trapping",
+            sortable: true
+          },
+          {
+            key: "swarm_capture",
+            sortable: true
+          },
+          {
+            key: "additional_activities",
+            sortable: true
+          },
+          {
+            key: "date_start",
+            sortable: true
+          },
+          {
+            key: "date_end",
+            sortable: true
+          },
+          {
+            key: "extention_status",
+            sortable: true
+          },
+          {
+            key: "extention_start",
+            sortable: true
+          },
+          {
+            key: "extention_end",
+            sortable: true
+          },
+          {
+            key: "extention_details",
+            sortable: true
+          },
+          {
+            key: "agreement_id",
+            sortable: true
+          },
+        ],
     }),
     props: {
       source: String

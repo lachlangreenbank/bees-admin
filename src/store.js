@@ -7,8 +7,8 @@ import router from '@/router'
 Vue.use(Vuex)
 
 let getToken = function () {
-  if ($cookies.get("Token")) {
-    return $cookies.get("Token")
+  if ($cookies.get("Token-l3253h")) {
+    return $cookies.get("Token-l3253h")
   } else {
     router.push('../../../../../../../login')
   }
@@ -21,13 +21,17 @@ export default new Vuex.Store({
   	milestone: {},
   	currentAgreement: {},
   	currentMilestone: {},
-  	milestoneCreateStatus: false
+  	milestoneCreateStatus: false,
+    milestoneLogs: {}
   },
   mutations: {
     setUser (state, user) {
       console.log(user)
       state.user = user
-      $cookies.set("user", user)
+      $cookies.set("Token-l3253h", user.Token)
+      if ($cookies.get("Token-l3253h")) {
+        router.push('agreement-list')
+      }
       return user
     },
   	setAgreements (state, agreements) {
@@ -51,17 +55,17 @@ export default new Vuex.Store({
       state.currentMilestones = currentMilestones
       state.milestoneCreateStatus = true
   	},
+    setMilestoneLogs (state, milestoneLogs) {
+      console.log(milestoneLogs)
+      state.milestoneLogs = milestoneLogs
+    },
   },
   actions: {
     login(context, Params) {
       console.log('getting data')
-      var config = {
-          headers: {}
-      };
-
+      var config = { headers: {} };
       axios
         .post('http://pha-bees.sodadev.com/api/user/validate', {
-            Token: "7650307942108497196214049692",
             User_Email: "Officer01@gmail.com",
             User_Password: "Officer01@gmail.com"
           }, config)
@@ -146,6 +150,38 @@ export default new Vuex.Store({
             ...Params
           })
         .then(res => (context.commit('setCurrentMilestone', res.data, { root: true })))
+    },
+    getMilestoneLogs(context, Params) {
+      console.log('getting data')
+
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/milestone_logs/single', {
+              Token: getToken(),
+              ...Params
+            })
+          .then(function (res) {
+            (context.commit('setMilestoneLogs', res.data, { root: true }))
+            resolve(res)
+          })
+        })
+    },
+    createMilestoneLog(context, Params) {
+      console.log('getting data')
+
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/milestone_logs/create', {
+              Token: getToken(),
+              ...Params
+            })
+          .then(function (res) {
+            // (context.commit('setCurrentMilestoneLogs', res.data, { root: true }))
+            console.log('Set milestone')
+            console.log(res)
+            resolve(res)
+          })
+        })
     },
   }
 })

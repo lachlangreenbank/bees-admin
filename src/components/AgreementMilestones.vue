@@ -6,7 +6,7 @@
           <v-layout  text-xs-left  wrap v-bind="binding">
               <v-flex>
                 <v-card style="padding:20px;" color="white">
-                  <v-card-title   class="title">Agreeement {{agreement.agreement_id}}</v-card-title>
+                  <v-card-title   class="title">Agreeement <span style="color:gray; font-size:14px"> - {{agreement.agreement_name}}</span></v-card-title>
                   <div>
                   <b-table :sort-by="'date_start'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
@@ -112,7 +112,7 @@
           milestone = {
             ...milestone, 
             Open: false,
-            Agreement_id: 'Milestone ' + splitContextId(milestone.context_id)[1]
+            Milestone_Id: 'Milestone ' + splitContextId(milestone.context_id)[1]
           }
           self.filteredMilestones.push(milestone) 
         });
@@ -157,7 +157,7 @@
         
             let params = {
               "context_id": context_id,
-              "completed": false,
+              "completed": "0",
               "status": 'created',
               // "ports": this.availableTests[0].selected == "1" ? true : false,
               "hive": "1",
@@ -201,10 +201,10 @@
             console.log(agreement_start_date)
 
             let milestone_start = new Date(dateObject)
-            milestone_start.setDate(dateObject.getDate()+(7*(i-1))+1);
+            milestone_start.setDate(dateObject.getDate()+((7*(i-1)*6))+1);
 
             let milestone_end = new Date(dateObject)
-            milestone_end.setDate(dateObject.getDate()+(7*i));
+            milestone_end.setDate(dateObject.getDate()+(42*i));
 
             // console.log(agreement_start_date)
 
@@ -234,7 +234,7 @@
         milestoneListFields: [
           
           {
-            key: 'Agreement_id',
+            key: 'Milestone_Id',
             sortable: true
           },
           {
@@ -253,22 +253,8 @@
             key: 'Open',
             sortable: false
           },
-          // {
-          //   key: 'endDate',
-          //   sortable: true,
-          // },
-          // {
-          //   key: 'Title',
-          //   sortable: true,
-          // },
         ],
         filteredMilestones: [
-          // { isActive: false,endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false},
-          // { isActive: false, endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false},
-          // { isActive: false, endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false},
-          // { isActive: true, endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false},
-          // { isActive: false, endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false},
-          // { isActive: false, endDate: 'TBD',startDate: 'TBD', Title: 'TBD', ms_context_id: 'TBD', Open: false}
         ]
     }),
     props: {

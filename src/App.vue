@@ -2,7 +2,7 @@
   <v-app>
         <v-content>
     <v-layout  style=" margin:0 important" fill-height wrap>
-      <v-navigation-drawer  style="background-color:#23282d" height="100%" width="180" dark permanent>
+      <v-navigation-drawer v-if="$cookies.get('Token-l3253h')" style="background-color:#23282d" height="100%" width="180" dark permanent>
           <v-toolbar style="background-color:#23282d" flat>
             <v-list>
               <v-list-tile>

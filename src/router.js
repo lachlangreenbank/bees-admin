@@ -18,6 +18,11 @@ export default new Router({
       component: Login
     },
     {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
       path: '/milestone-list',
       name: 'milestone-list',
       component: MilestoneList
