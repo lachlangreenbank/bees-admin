@@ -10,12 +10,12 @@
                   <div>
                   <b-table :sort-by="'date_start'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
-                      <v-btn v-if="row.item.Open" color="success"  @click="display = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
+                      <v-btn v-if="row.item.Open" color="success"  @click="ready = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
                     </template>
                   </b-table>
 
-                  <v-flex xs12 v-if="!display && !timeout">
+                  <v-flex xs12 v-if="!ready && !timeout">
                     <v-progress-linear
                       indeterminate
                       color="yellow darken-2"
@@ -49,19 +49,22 @@
       ]).then(function(values) {
         console.log(values)
 
+        const agreement = values[1].data.data[0]
+
         self.milestones = values[0].data.data
         const milestones = self.milestones.filter(
-          ms => ms.ms_agreement_id == self.$router.history.current.params.agreement
+          ms => ms.ms_agreement_id == agreement.agreement_jurisdictions[0].post_name + '-' +self.$router.history.current.params.agreement
         );
 
         self.agreement = values[1].data.data[0]
         console.log(self.agreement)
-        const agreement = values[1].data.data[0]
+        
         
         // If 6 milestones dont exist for this agreement, go create missing ones
         if (milestones.length < 6) {
           self.fillEmptyMilestones(milestones, agreement)
         }
+
         console.log( self.filteredMilestones)
         self.ready = true
       })
@@ -96,7 +99,7 @@
         console.log(this.milestones)
         self.milestones = this.milestones
         const milestones = self.milestones.filter(
-          ms => ms.ms_agreement_id == self.$router.history.current.params.agreement
+          ms => ms.ms_agreement_id == self.agreement.agreement_jurisdictions[0].post_name + '-' + self.$router.history.current.params.agreement
         );
         let splitContextId = function (string) {return string.split('-');}
 
@@ -152,6 +155,7 @@
 
       fillEmptyMilestones: async function(milestones, agreement) {
         let self = this
+        console.log(self.agreement.agreement_jurisdictions[0].post_name)
         let setMilestone = function (context_id, start_date, end_date) {
           return new Promise(function(resolve, reject) {
         
@@ -174,7 +178,7 @@
               "extention_start": "0000/00/00",
               "extention_end": "0000/00/00",
               "extention_details": "extention_details create", 
-              "agreement_id": self.$router.history.current.params.agreement
+              "agreement_id": self.agreement.agreement_jurisdictions[0].post_name + '-' + self.$router.history.current.params.agreement
             }
 
 
