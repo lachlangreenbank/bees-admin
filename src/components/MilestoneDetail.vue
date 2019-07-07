@@ -15,10 +15,10 @@
             {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
               <option>created</option>
-              <option>Pending review</option>
-              <option>In progress</option>
-              <option>Overdue</option>
-              <option>Overdue/Extended</option>
+              <option>pending review</option>
+              <option>in progress</option>
+              <option>overdue</option>
+              <option>overdue/Extended</option>
             </select>
         </v-flex>
          
@@ -29,7 +29,7 @@
                 <label for="exampleFormControlSelect1">Start date</label>
                   <b-form-input :id="`type-date`" type="date"
                     id="input-2"
-                    v-model="milestone.data[0].ms_date_start"
+                    v-model="milestoneDates.startDate"
                     required
                     placeholder="Start date"
                   ></b-form-input>
@@ -38,7 +38,7 @@
                 <label for="exampleFormControlSelect1">End date</label>
                   <b-form-input :id="`type-date`" type="date"
                     id="input-2"
-                    v-model="milestone.data[0].ms_date_end"
+                    v-model="milestoneDates.endDate"
                     required
                     placeholder="Start date"
                   ></b-form-input>
@@ -51,10 +51,10 @@
               <v-flex xs6>
             <label for="exampleFormControlSelect1">Extention status</label>
             <select v-model="extentionStatus" class="form-control" id="exampleFormControlSelect1">
-              <option>Pending</option>
-              <option>In progress</option>
-              <option>Overdue</option>
-              <option>Overdue/Extended</option>
+              <option>pending</option>
+              <option>approved</option>
+              <option>denied</option>
+              
             </select>
         </v-flex>
 
@@ -345,7 +345,7 @@ import { mapState } from 'vuex'
           "additional_activities": this.availableTests[6].selected ? "1" : "0",
           "date_start": this.milestoneDates.startDate,
           "date_end": this.milestoneDates.endDate,
-          "extention_status": "extending",
+          "extention_status": this.extentionStatus,
           "extention_start": this.extentionDates.startDate,
           "extention_end": this.extentionDates.endDate,
           "extention_details": this.extentionDetails, 
