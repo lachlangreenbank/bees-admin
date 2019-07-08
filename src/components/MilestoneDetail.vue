@@ -14,11 +14,10 @@
             <label for="exampleFormControlSelect1">Milestone status</label>
             {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
-              <option>created</option>
-              <option>pending review</option>
+              <option>created</option>
               <option>in progress</option>
-              <option>overdue</option>
-              <option>overdue/Extended</option>
+              <option>pending review</option>
+              <option>completed</option>
             </select>
         </v-flex>
          
@@ -135,9 +134,9 @@
           </v-flex>
  -->
           <v-flex xs12 d-flex>
-            <v-flex xs4>
+            <!-- <v-flex xs4>
               <v-btn outline @click="getMilestoneLogs()" flat> View logs</v-btn>
-            </v-flex>
+            </v-flex> -->
             <v-flex xs4>
               <v-btn outline @click="$router.go(-1)" flat> Cancel</v-btn>
             </v-flex>
@@ -195,7 +194,14 @@ import { mapState } from 'vuex'
     },
     watch: {
       milestoneCreateStatus: function  () {
+        console.log("updated")
         this.updated = 'updated'
+        let self = this
+
+        setTimeout( function () {
+            self.updated = 'update'
+        }, 2000)
+        
       },
       milestone: function  () {
         console.log(this.milestone)
@@ -332,7 +338,8 @@ import { mapState } from 'vuex'
       updateMilestone () {
         let self = this
         let params = {
-          "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
+          // The context_Id should not get updated, might break things
+          // "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
           "completed": '0',
           "status": this.milestoneStatus,
           "hive": this.availableTests[0].selected ? "1" : "0",
@@ -356,6 +363,7 @@ import { mapState } from 'vuex'
         console.log(params)
         this.$store.dispatch('updateMilestone', params)
         .then(self.$store.dispatch('createMilestoneLog', params))
+        // .then(self.updated = "updated")
         
       },
       getMilestoneLogs: function  () {

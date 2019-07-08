@@ -54,6 +54,11 @@ export default new Vuex.Store({
       console.log(currentMilestones)
       state.currentMilestones = currentMilestones
       state.milestoneCreateStatus = true
+
+      setTimeout(function  () {
+        state.milestoneCreateStatus = false
+      }, 100)
+      
   	},
     setMilestoneLogs (state, milestoneLogs) {
       console.log(milestoneLogs)
