@@ -6,6 +6,7 @@
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
+            <v-btn icon @click="back()"><</v-btn>
             <v-card-title   class="title">Milestone {{$router.history.current.params.milestone_id}} <span style="color:gray; font-size:14px">- {{agreements.data[0].agreement_name}}</span></v-card-title>
             <!-- <b-input-group size="lg" prepend="$" append=".00">
           <b-form-input></b-form-input>
@@ -200,7 +201,7 @@ import { mapState } from 'vuex'
 
         setTimeout( function () {
             self.updated = 'update'
-        }, 2000)
+        }, 5000)
         
       },
       milestone: function  () {
@@ -233,14 +234,14 @@ import { mapState } from 'vuex'
 
           console.log(milestoneDisplay)
 
-          if (milestoneDisplay.hive == "1") {
-            this.tests.push({
-                name: 'Hive test',
-                type: 'hive',
-                selected: true
-              })
-            this.availableTests[0].selected = true
-          }
+          // if (milestoneDisplay.hive == "1") {
+          //   this.tests.push({
+          //       name: 'Hive test',
+          //       type: 'hive',
+          //       selected: true
+          //     })
+          //   this.availableTests[0].selected = true
+          // }
 
           if (milestoneDisplay.floral == "1") {
             this.tests.push({
@@ -248,7 +249,7 @@ import { mapState } from 'vuex'
                 type: 'floral',
                 selected: true
               })
-            this.availableTests[1].selected = true
+            this.availableTests[0].selected = true
           }
 
 
@@ -258,7 +259,7 @@ import { mapState } from 'vuex'
                 type: 'catchbox',
                 selected: true
               })
-            this.availableTests[2].selected = true
+            this.availableTests[1].selected = true
           }
 
           // if (milestoneDisplay.stickyMat == "1") {
@@ -270,14 +271,14 @@ import { mapState } from 'vuex'
           //   this.availableTests[3].selected = true
           // }
 
-          if (milestoneDisplay.frameInspection == "1") {
-            this.tests.push({
-                name: 'Frame inspeciton',
-                type: 'frame',
-                selected: true
-              })
-            this.availableTests[3].selected = true
-          }
+          // if (milestoneDisplay.frameInspection == "1") {
+          //   this.tests.push({
+          //       name: 'Frame inspeciton',
+          //       type: 'frame',
+          //       selected: true
+          //     })
+          //   this.availableTests[3].selected = true
+          // }
 
           if (milestoneDisplay.hornetTrapping == "1") {
             this.tests.push({
@@ -285,7 +286,7 @@ import { mapState } from 'vuex'
                 type: 'hornet',
                 selected: true
               })
-            this.availableTests[4].selected = true
+            this.availableTests[2].selected = true
           }
 
           // if (milestoneDisplay.hornetTrapping == "1") {
@@ -297,23 +298,23 @@ import { mapState } from 'vuex'
           //   this.availableTests[5].selected = true
           // }
 
-          if (milestoneDisplay.swarmCapture == "1") {
-            this.tests.push({
-                name: 'swarm capture',
-                type: 'swarm',
-                selected: true
-              })
-            this.availableTests[5].selected = true
-          }
+          // if (milestoneDisplay.swarmCapture == "1") {
+          //   this.tests.push({
+          //       name: 'swarm capture',
+          //       type: 'swarm',
+          //       selected: true
+          //     })
+          //   this.availableTests[5].selected = true
+          // }
 
-          if (milestoneDisplay.additionalActivities == "1") {
-            this.tests.push({
-                name: 'Additional activities',
-                type: 'additional',
-                selected: true
-              })
-            this.availableTests[6].selected = true
-          }
+          // if (milestoneDisplay.additionalActivities == "1") {
+          //   this.tests.push({
+          //       name: 'Additional activities',
+          //       type: 'additional',
+          //       selected: true
+          //     })
+          //   this.availableTests[6].selected = true
+          // }
 
           
         }
@@ -323,6 +324,9 @@ import { mapState } from 'vuex'
       }
     },
     methods: {
+      back: function () {
+        this.$router.go(-1)
+      },
       addTest: function  (test, i) {
         this.tests.push(test)
         this.availableTests[i].selected = true
@@ -342,14 +346,14 @@ import { mapState } from 'vuex'
           // "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
           "completed": '0',
           "status": this.milestoneStatus,
-          "hive": this.availableTests[0].selected ? "1" : "0",
-          "floral_sweep": this.availableTests[1].selected ? "1" : "0",
-          "catchbox": this.availableTests[2].selected ? "1" : "0",
+          // "hive": this.availableTests[0].selected ? "1" : "0",
+          "floral_sweep": this.availableTests[0].selected ? "1" : "0",
+          "catchbox": this.availableTests[1].selected ? "1" : "0",
           // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
-          "frame_inspection": this.availableTests[3].selected ? "1" : "0",
-          "hornet_trapping": this.availableTests[4].selected ? "1" : "0",
-          "swarm_capture": this.availableTests[5].selected ? "1" : "0",
-          "additional_activities": this.availableTests[6].selected ? "1" : "0",
+          // "frame_inspection": this.availableTests[3].selected ? "1" : "0",
+          "hornet_trapping": this.availableTests[2].selected ? "1" : "0",
+          // "swarm_capture": this.availableTests[5].selected ? "1" : "0",
+          // "additional_activities": this.availableTests[6].selected ? "1" : "0",
           "date_start": this.milestoneDates.startDate,
           "date_end": this.milestoneDates.endDate,
           "extention_status": this.extentionStatus,
@@ -414,11 +418,11 @@ import { mapState } from 'vuex'
         ],
         tests: [],
         availableTests: [
-          {
-            name: 'Hive inspeciton',
-            type: 'hive',
-            selected: false
-          },
+          // {
+          //   name: 'Hive inspeciton',
+          //   type: 'hive',
+          //   selected: false
+          // },
           {
             name: 'Floral sweep',
             type: 'floral',
@@ -434,26 +438,26 @@ import { mapState } from 'vuex'
           //   type: 'sticky',
           //   selected: false
           // },
-          {
-            name: 'Frame inspection',
-            type: 'frame',
-            selected: false
-          },
+          // {
+          //   name: 'Frame inspection',
+          //   type: 'frame',
+          //   selected: false
+          // },
           {
             name: 'Asian hornet trapping',
             type: 'hornet',
             selected: false
           },
-          {
-            name: 'Swarm capture',
-            type: 'swarm',
-            selected: false
-          },
-          {
-            name: 'Additional activities',
-            type: 'additional',
-            selected: false
-          }
+          // {
+          //   name: 'Swarm capture',
+          //   type: 'swarm',
+          //   selected: false
+          // },
+          // {
+          //   name: 'Additional activities',
+          //   type: 'additional',
+          //   selected: false
+          // }
         ],
         milestoneDates: {
           startDate: '2019/12/11',

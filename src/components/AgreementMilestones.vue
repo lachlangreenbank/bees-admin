@@ -22,6 +22,8 @@
                     ></v-progress-linear>
                   </v-flex>
                   <v-btn :key="timeout" v-if="!ready && timeout" @click="reload()">Initialize agreement</v-btn>
+                  <v-btn :key="timeout" v-if="timeout" small @click="addExtraMilestone()">Add milestone</v-btn>
+                  
                 </div>
               </v-card>
             </v-flex>
@@ -58,7 +60,6 @@
 
         self.agreement = values[1].data.data[0]
         console.log(self.agreement)
-        
         
         // If 6 milestones dont exist for this agreement, go create missing ones
         if (milestones.length < 6) {
@@ -152,42 +153,10 @@
         return cleanNames
         
       },
-
+      // There is alwasy at least 6 milesotnes, if there are not 6, create any missing ones
       fillEmptyMilestones: async function(milestones, agreement) {
         let self = this
         console.log(self.agreement.agreement_jurisdictions[0].post_name)
-        let setMilestone = function (context_id, start_date, end_date) {
-          return new Promise(function(resolve, reject) {
-        
-            let params = {
-              "context_id": context_id,
-              "completed": "0",
-              "status": 'created',
-              // "ports": this.availableTests[0].selected == "1" ? true : false,
-              "hive": "1",
-              "floral_sweep": "1",
-              "catchbox": "1",
-              // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
-              "frame_inspection": "0",
-              "hornet_trapping": "0",
-              "swarm_capture": "0",
-              // "additional_activities": this.availableTests[7].selected ? "1" : "0",
-              "date_start":  start_date,
-              "date_end": end_date,
-              "extention_status": "0",
-              "extention_start": "0000/00/00",
-              "extention_end": "0000/00/00",
-              "extention_details": "extention_details create", 
-              "agreement_id": self.agreement.agreement_jurisdictions[0].post_name + '-' + self.$router.history.current.params.agreement
-            }
-
-
-            self.$store.dispatch('setMilestone', params)
-            .then(console.log())
-            .then(resolve(true))
-          })
-        }
-          
 
         let i = 1
         for (i; i <= 6; i++) {
@@ -220,13 +189,76 @@
               return year + "/" + month + "/" + day;
             }
 
-            await setMilestone(
+            await self.setMilestone(
               context_id, 
               getFormattedDate(milestone_start), 
               getFormattedDate(milestone_end)
             )
           } 
         }
+      },
+      addExtraMilestone: function () {
+        let self = this
+        var last_element = this.filteredMilestones[0];
+        console.log(this.filteredMilestones.length)
+        let context_id = last_element.context_id.split("-");
+        // Construct the new context ID by getting length of current limestones to get the next number and attach that to the agreement id
+        context_id = context_id[0] + '-' +  (this.filteredMilestones.length + 1)
+
+        let milestone_start = new Date(last_element.date_end)
+        milestone_start.setDate(milestone_start.getDate() + 1)
+
+        let milestone_end = new Date(last_element.date_end)
+        milestone_end.setDate(milestone_start.getDate() + 43)
+
+        let getFormattedDate = function (dateObj) {
+          var month = dateObj.getUTCMonth() + 1; //months from 1-12
+          var day = dateObj.getUTCDate();
+          var year = dateObj.getUTCFullYear();
+
+          return year + "/" + month + "/" + day;
+        }
+
+        console.log(context_id + ' ' + getFormattedDate(milestone_start) + ' ' + getFormattedDate(milestone_end))
+        let setTheNewMilestone = async function () {
+          await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end))
+          .then(function (res) {
+            console.log(res)
+            // self.reload()
+          })
+        }
+        setTheNewMilestone()
+      },
+      setMilestone: function (context_id, start_date, end_date) {
+        let self = this
+        return new Promise(function(resolve, reject) {
+          let params = {
+            "context_id": context_id,
+            "completed": "0",
+            "status": 'created',
+            // "ports": this.availableTests[0].selected == "1" ? true : false,
+            "hive": "1",
+            "floral_sweep": "1",
+            "catchbox": "1",
+            // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
+            "frame_inspection": "0",
+            "hornet_trapping": "0",
+            "swarm_capture": "0",
+            // "additional_activities": this.availableTests[7].selected ? "1" : "0",
+            "date_start":  start_date,
+            "date_end": end_date,
+            "extention_status": "0",
+            "extention_start": "0000/00/00",
+            "extention_end": "0000/00/00",
+            "extention_details": "extention_details create", 
+            "agreement_id": self.agreement.agreement_jurisdictions[0].post_name + '-' + self.$router.history.current.params.agreement
+          }
+
+
+          self.$store.dispatch('setMilestone', params)
+          .then(console.log())
+          .then(resolve(true))
+        })
       }
     },
     data: () => ({
