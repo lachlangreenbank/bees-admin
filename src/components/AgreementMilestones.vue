@@ -8,7 +8,7 @@
                 <v-card style="padding:20px;" color="white">
                   <v-card-title   class="title">Agreeement <span style="color:gray; font-size:14px"> - {{agreement.agreement_name}}</span></v-card-title>
                   <div>
-                  <b-table :sort-by="'date_start'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
+                  <b-table :sort-by="'Milestone_Id'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="ready = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
@@ -224,6 +224,12 @@
           await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end))
           .then(function (res) {
             console.log(res)
+            self.filteredMilestones.push(Object.assign({
+              Milestone_Id: 'Milestone ' + (res.data.data[0].ms_context_id).split("-")[1],
+              date_start: getFormattedDate(milestone_start),
+              date_end: getFormattedDate(milestone_end)
+            },
+              self.renameKeys(res.data.data[0])))
             // self.reload()
           })
         }
@@ -256,8 +262,7 @@
 
 
           self.$store.dispatch('setMilestone', params)
-          .then(console.log())
-          .then(resolve(true))
+          .then((res) => resolve(res))
         })
       }
     },
