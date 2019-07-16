@@ -22,7 +22,7 @@
                     ></v-progress-linear>
                   </v-flex>
                   <v-btn :key="timeout" v-if="!ready && timeout" @click="reload()">Initialize agreement</v-btn>
-                  <v-btn :key="timeout" v-if="timeout" small @click="addExtraMilestone()">Add milestone</v-btn>
+                  <v-btn :key="timeout" v-if="ready && timeout && !milestoneAddHide" small @click="addExtraMilestone()">Add milestone</v-btn>
                   
                 </div>
               </v-card>
@@ -199,6 +199,13 @@
       },
       addExtraMilestone: function () {
         let self = this
+
+        // hide the add milestone button for a sec
+        self.milestoneAddHide = true
+        setTimeout(function () {
+          self.milestoneAddHide = false
+        }, 2000)
+
         var last_element = this.filteredMilestones[0];
         console.log(this.filteredMilestones.length)
         let context_id = last_element.context_id.split("-");
@@ -267,6 +274,7 @@
       }
     },
     data: () => ({
+      milestoneAddHide: false,
       timeout: false,
       agreement: {},
       ready: false,
