@@ -1,7 +1,7 @@
 <template>
   <span>
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs12 md9 lg7>
+      <v-flex style="margin:10px;" xs12>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
               <v-flex>

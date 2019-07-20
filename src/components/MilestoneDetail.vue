@@ -2,7 +2,7 @@
 <template>
   <span>
     <v-layout style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs12 md12 lg7>
+      <v-flex style="margin:10px;" xs12>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
@@ -13,7 +13,6 @@
         </b-input-group> -->
           <v-flex xs6>
             <label for="exampleFormControlSelect1">Milestone status</label>
-            {{milestoneStatus}}
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
               <option>created</option>
               <option>in progress</option>
@@ -95,12 +94,12 @@
          
            
           <v-flex xs12>
-            <label for="exampleFormControlSelect1">Select tests</label>
+            <label for="exampleFormControlSelect1">Seasonal activities</label>
           </v-flex>
           <v-layout style="margin-left:2px;">  
             <v-flex xs6>
               <b-list-group>
-                <label for="exampleFormControlSelect1">Available tests</label>
+                <label for="exampleFormControlSelect1">Available activities</label>
               <b-list-group-item v-bind:style= "[test.selected ? {'background-color':'silver !important', 'color':'white !important'} : {}]" :disabled="test.selected" v-for="(test, i) in availableTests" @click="addTest(test, i)" style="cursor:pointer">
                  {{test.name}} 
               </b-list-group-item>
@@ -109,14 +108,14 @@
           </v-flex>
               <v-flex xs6>
               <b-list-group v-if="tests.length > 0">
-                <label for="exampleFormControlSelect1">Selected tests</label>
+                <label for="exampleFormControlSelect1">Selected activities</label>
                 <b-list-group-item v-for="(test, i) in tests">{{test.name}}
                   <v-btn style="margin:0 !important; float:right" @click="removeTest(test, i)" color="error" flat icon small>x</v-btn>
                 </b-list-group-item>
               </b-list-group>
               <b-list-group v-else>
-                <label for="exampleFormControlSelect1">Selected tests</label>
-                <b-list-group-item>No tests selected
+                <label for="exampleFormControlSelect1">Selected activities</label>
+                <b-list-group-item>No activities selected
                    
                 </b-list-group-item>
               </b-list-group>
@@ -253,14 +252,14 @@ import { mapState } from 'vuex'
           }
 
 
-          if (milestoneDisplay.catchbox == "1") {
-            this.tests.push({
-                name: 'Catchbox',
-                type: 'catchbox',
-                selected: true
-              })
-            this.availableTests[1].selected = true
-          }
+          // if (milestoneDisplay.catchbox == "1") {
+          //   this.tests.push({
+          //       name: 'Catchbox',
+          //       type: 'catchbox',
+          //       selected: true
+          //     })
+          //   this.availableTests[1].selected = true
+          // }
 
           // if (milestoneDisplay.stickyMat == "1") {
           //   this.tests.push({
@@ -280,14 +279,14 @@ import { mapState } from 'vuex'
           //   this.availableTests[3].selected = true
           // }
 
-          if (milestoneDisplay.hornetTrapping == "1") {
-            this.tests.push({
-                name: 'Asian hornet trapping',
-                type: 'hornet',
-                selected: true
-              })
-            this.availableTests[2].selected = true
-          }
+          // if (milestoneDisplay.hornetTrapping == "1") {
+          //   this.tests.push({
+          //       name: 'Asian hornet trapping',
+          //       type: 'hornet',
+          //       selected: true
+          //     })
+          //   this.availableTests[2].selected = true
+          // }
 
           // if (milestoneDisplay.hornetTrapping == "1") {
           //   this.tests.push({
@@ -348,10 +347,10 @@ import { mapState } from 'vuex'
           "status": this.milestoneStatus,
           // "hive": this.availableTests[0].selected ? "1" : "0",
           "floral_sweep": this.availableTests[0].selected ? "1" : "0",
-          "catchbox": this.availableTests[1].selected ? "1" : "0",
+          // "catchbox": this.availableTests[1].selected ? "1" : "0",
           // "sticky_mat": this.availableTests[0].selected == "1" ? true : false,
           // "frame_inspection": this.availableTests[3].selected ? "1" : "0",
-          "hornet_trapping": this.availableTests[2].selected ? "1" : "0",
+          // "hornet_trapping": this.availableTests[2].selected ? "1" : "0",
           // "swarm_capture": this.availableTests[5].selected ? "1" : "0",
           // "additional_activities": this.availableTests[6].selected ? "1" : "0",
           "date_start": this.milestoneDates.startDate,
@@ -428,11 +427,11 @@ import { mapState } from 'vuex'
             type: 'floral',
             selected: false
           },
-          {
-            name: 'Catchbox',
-            type: 'catchbox',
-            selected: false
-          },
+          // {
+          //   name: 'Catchbox',
+          //   type: 'catchbox',
+          //   selected: false
+          // },
           // {
           //   name: 'Sticky mat',
           //   type: 'sticky',
@@ -443,11 +442,11 @@ import { mapState } from 'vuex'
           //   type: 'frame',
           //   selected: false
           // },
-          {
-            name: 'Asian hornet trapping',
-            type: 'hornet',
-            selected: false
-          },
+          // {
+          //   name: 'Asian hornet trapping',
+          //   type: 'hornet',
+          //   selected: false
+          // },
           // {
           //   name: 'Swarm capture',
           //   type: 'swarm',

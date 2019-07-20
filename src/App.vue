@@ -37,12 +37,19 @@
               </v-list-tile-content>
             </v-list-tile> -->
           </v-list>
+
+         
         </v-navigation-drawer>
 
-        <v-flex>
-            <router-view></router-view>
+        <v-flex v-if="$route.path == '/login'" xs12>
+          
+          <router-view></router-view>
         </v-flex>
-      
+        <v-flex v-else xs8>
+          
+          <router-view></router-view>
+        </v-flex>
+        <p v-if="$cookies.get('Token-l3253h')" @click="logout()" style="cursor:pointer; position:absolute; right:20px; top:20px;">Logout</p>
       </v-layout>
 
       
@@ -57,6 +64,12 @@ export default {
   name: 'App',
   components: {
     
+  },
+  methods: {
+    logout: function () {
+      this.$store.dispatch('logout')
+    }
+        
   },
   data () {
     return {

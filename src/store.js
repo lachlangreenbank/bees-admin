@@ -25,6 +25,11 @@ export default new Vuex.Store({
     milestoneLogs: {}
   },
   mutations: {
+    unsetUser (state, user) {
+      $cookies.remove("Token-l3253h")
+      // $cookies.remove("Token")
+      return user
+    },
     setUser (state, user) {
       console.log(user)
       state.user = user
@@ -66,15 +71,24 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    logout(context, Params) {
+      context.commit('unsetUser')
+      window.location.reload()
+    },    
     login(context, Params) {
       console.log('getting data')
       var config = { headers: {} };
-      axios
-        .post('http://pha-bees.sodadev.com/api/user/validate', {
-            User_Email: "Officer01@gmail.com",
-            User_Password: "Officer01@gmail.com"
-          }, config)
-        .then(res => (context.commit('setUser', res.data, { root: true })))
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/user/validate', {
+              ...Params
+            }, config)
+          // .then(res => (context.commit('setUser', res.data, { root: true })))
+          .then(function (res) {
+            (context.commit('setUser', res.data, { root: true }))
+            resolve(res)
+          })
+        })
     },
   	getAgreements(context, Params) {
 	    console.log('getting data')

@@ -2,7 +2,7 @@
   <span>
 
     <v-layout align-left style="margin:0 important" fill-height wrap>
-      <v-flex style="margin:10px;" xs12 md6 lg6>
+      <v-flex style="margin:10px;" xs10>
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
           
