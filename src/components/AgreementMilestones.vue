@@ -47,7 +47,7 @@
 
       Promise.all([
         self.$store.dispatch('getMilestones'),
-        self.$store.dispatch('getAgreements', {Id: self.$router.history.current.params.agreement}),
+        self.$store.dispatch('getAgreements', {Id: self.$route.params.agreement}),
       ]).then(function(values) {
         console.log(values)
 

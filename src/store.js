@@ -113,7 +113,7 @@ export default new Vuex.Store({
 	    axios
 	      .post('http://pha-bees.sodadev.com/api/milestone/single', {
 	          Token: getToken(),
-	          Id: Params.Id
+	          ...Params
 	        })
 	      .then(res => (context.commit('setMilestone', res.data, { root: true })))
 	  },

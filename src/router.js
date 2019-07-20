@@ -27,11 +27,11 @@ export default new Router({
       name: 'milestone-list',
       component: MilestoneList
     },
-    {
-      path: '/milestone-detail/:milestone_id',
-      name: 'milestone-detail',
-      component: MilestoneDetail
-    },
+    // {
+    //   path: '/milestone-detail/:milestone_id',
+    //   name: 'milestone-detail',
+    //   component: MilestoneDetail
+    // },
     {
       path: '/agreement-list',
       name: 'agreement-list',

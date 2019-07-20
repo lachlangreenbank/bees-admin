@@ -1,6 +1,6 @@
 <template>
   <span>
-    <MilestoneDetail :milestone="milestone"></MilestoneDetail>     
+    <MilestoneDetail></MilestoneDetail>     
   </span>
 </template>
 

@@ -7,7 +7,7 @@
           <v-layout  text-xs-left  wrap v-bind="binding">
           <v-card style="padding:20px;" color="white">
             <v-btn icon @click="back()"><</v-btn>
-            <v-card-title   class="title">Milestone {{$router.history.current.params.milestone_id}} <span style="color:gray; font-size:14px">- {{agreements.data[0].agreement_name}}</span></v-card-title>
+            <v-card-title   class="title">Milestone {{$route.params.milestone_id}} <span style="color:gray; font-size:14px">- {{agreements.data[0].agreement_name}}</span></v-card-title>
             <!-- <b-input-group size="lg" prepend="$" append=".00">
           <b-form-input></b-form-input>
         </b-input-group> -->
@@ -84,12 +84,12 @@
                   ></b-form-input>
               </v-flex>
 
-              <b-form-textarea
+              <!-- <b-form-textarea
                 id="textarea"
                 v-model="extentionDetails"
                 placeholder="Notes about extention"
                 rows="3"
-              ></b-form-textarea>
+              ></b-form-textarea> -->
             </v-layout>
              </v-flex>
          
@@ -174,9 +174,9 @@ import { mapState } from 'vuex'
       
     },
     created: function () {
-      this.$store.dispatch('getAgreements', {Id: this.$router.history.current.params.agreement_id})
+      this.$store.dispatch('getAgreements', {Id: this.$route.params.agreement})
       .then(res => console.log(res))
-      this.$store.dispatch('getMilestone', {Id: this.$router.history.current.params.milestone_pk_id})
+      this.$store.dispatch('getMilestone', {Id: this.$route.params.milestone_pk_id})
     },
     computed: {
       ...mapState({
@@ -343,7 +343,7 @@ import { mapState } from 'vuex'
         let self = this
         let params = {
           // The context_Id should not get updated, might break things
-          // "context_id": this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id,
+          // "context_id": this.$route.params.agreement + '-' + this.$route.params.milestone_id,
           "completed": '0',
           "status": this.milestoneStatus,
           // "hive": this.availableTests[0].selected ? "1" : "0",
@@ -360,10 +360,10 @@ import { mapState } from 'vuex'
           "extention_start": this.extentionDates.startDate,
           "extention_end": this.extentionDates.endDate,
           "extention_details": this.extentionDetails, 
-          // "agreement_id": this.$router.history.current.params.agreement
+          // "agreement_id": this.$route.params.agreement
         }
 
-        params = Object.assign({Id: this.$router.history.current.params.milestone_pk_id}, params)
+        params = Object.assign({Id: this.$route.params.milestone_pk_id}, params)
         console.log(params)
         this.$store.dispatch('updateMilestone', params)
         .then(self.$store.dispatch('createMilestoneLog', params))
@@ -371,7 +371,7 @@ import { mapState } from 'vuex'
         
       },
       getMilestoneLogs: function  () {
-        this.$store.dispatch('getMilestoneLogs', {Context_Id: this.$router.history.current.params.agreement + '-' + this.$router.history.current.params.milestone_id})
+        this.$store.dispatch('getMilestoneLogs', {Context_Id: this.$route.params.agreement + '-' + this.$route.params.milestone_id})
       },
       renameKeys: function (obj) {
         let keysMap = {
