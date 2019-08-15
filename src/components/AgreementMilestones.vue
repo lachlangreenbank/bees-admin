@@ -5,24 +5,28 @@
         <v-container  grid-list-xl>
           <v-layout  text-xs-left  wrap v-bind="binding">
               <v-flex>
+
                 <v-card style="padding:20px;" color="white">
-                  <v-card-title   class="title">Agreeement <span style="color:gray; font-size:14px"> - {{agreement.agreement_name}}</span></v-card-title>
+                  <v-card-title   class="title">Agreement <span style="color:gray; font-size:14px"> - {{agreement.agreement_name}}</span></v-card-title>
                   <div>
-                  <b-table :sort-by="'Milestone_Id'" v-if="ready" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
+                  <b-table :sort-by="'Milestone_Id'" v-if="ready && timeout" class="milestone-list" hover :items="filteredMilestones" :fields="milestoneListFields">
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="ready = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
+                      <v-btn v-if="deleteMode"  @click="deleteMilestones(row.item.milestone_Id)" red small>Delete</v-btn>
                     </template>
                   </b-table>
 
-                  <v-flex xs12 v-if="!ready && !timeout">
+                  <v-flex xs12 v-else-if="!timeout">
                     <v-progress-linear
                       indeterminate
                       color="yellow darken-2"
                     ></v-progress-linear>
                   </v-flex>
-                  <v-btn :key="timeout" v-if="!ready && timeout" @click="reload()">Initialize agreement</v-btn>
+                  <v-btn  :key="timeout" v-else-if="!ready && timeout" @click="reload()">Initialize agreement</v-btn>
                   <v-btn :key="timeout" v-if="ready && timeout && !milestoneAddHide" small @click="addExtraMilestone()">Add milestone</v-btn>
+                  <v-switch style="display:inline-block"  v-if="ready && timeout && !milestoneDeleteHide" v-model="deleteMode">Delete mode</v-switch><label v-if="ready && timeout && !milestoneDeleteHide">Delete mode</label>
+                  
                   
                 </div>
               </v-card>
@@ -62,7 +66,7 @@
         console.log(self.agreement)
         
         // If 6 milestones dont exist for this agreement, go create missing ones
-        if (milestones.length < 6) {
+        if (milestones.length < 10) {
           self.fillEmptyMilestones(milestones, agreement)
         }
 
@@ -72,7 +76,7 @@
 
       setTimeout(function  () {
         self.timeout = true
-      },1000)
+      }, 3500)
     },
     components: {
       MilestoneDetail
@@ -159,8 +163,8 @@
         console.log(self.agreement.agreement_jurisdictions[0].post_name)
 
         let i = 1
-        for (i; i <= 6; i++) {
-          this.ready =false
+        for (i; i <= 10; i++) {
+          this.ready = false
           if (!milestones[i-1]) {
             console.log(i)
             let context_id = self.$router.history.current.params.agreement + '-' + i;
@@ -192,7 +196,8 @@
             await self.setMilestone(
               context_id, 
               getFormattedDate(milestone_start), 
-              getFormattedDate(milestone_end)
+              getFormattedDate(milestone_end),
+              self.agreement.agreement_jurisdictions[0].post_name
             )
           } 
         }
@@ -228,7 +233,7 @@
 
         console.log(context_id + ' ' + getFormattedDate(milestone_start) + ' ' + getFormattedDate(milestone_end))
         let setTheNewMilestone = async function () {
-          await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end))
+          await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end), self.agreement.agreement_jurisdictions[0].post_name)
           .then(function (res) {
             console.log(res)
             self.filteredMilestones.push(Object.assign({
@@ -242,7 +247,72 @@
         }
         setTheNewMilestone()
       },
-      setMilestone: function (context_id, start_date, end_date) {
+      addExtraMilestone: function () {
+        let self = this
+
+        // hide the add milestone button for a sec
+        self.milestoneAddHide = true
+        setTimeout(function () {
+          self.milestoneAddHide = false
+        }, 2000)
+
+        var last_element = this.filteredMilestones[0];
+        console.log(this.filteredMilestones.length)
+        let context_id = last_element.context_id.split("-");
+        // Construct the new context ID by getting length of current limestones to get the next number and attach that to the agreement id
+        context_id = context_id[0] + '-' +  (this.filteredMilestones.length + 1)
+
+        let milestone_start = new Date(last_element.date_end)
+        milestone_start.setDate(milestone_start.getDate() + 1)
+
+        let milestone_end = new Date(last_element.date_end)
+        milestone_end.setDate(milestone_start.getDate() + 43)
+
+        let getFormattedDate = function (dateObj) {
+          var month = dateObj.getUTCMonth() + 1; //months from 1-12
+          var day = dateObj.getUTCDate();
+          var year = dateObj.getUTCFullYear();
+
+          return year + "/" + month + "/" + day;
+        }
+
+        console.log(context_id + ' ' + getFormattedDate(milestone_start) + ' ' + getFormattedDate(milestone_end))
+        let setTheNewMilestone = async function () {
+          await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end), self.agreement.agreement_jurisdictions[0].post_name)
+          .then(function (res) {
+            console.log(res)
+            self.filteredMilestones.push(Object.assign({
+              Milestone_Id: 'Milestone ' + (res.data.data[0].ms_context_id).split("-")[1],
+              date_start: getFormattedDate(milestone_start),
+              date_end: getFormattedDate(milestone_end)
+            },
+              self.renameKeys(res.data.data[0])))
+            // self.reload()
+          })
+        }
+        setTheNewMilestone()
+      },
+      deleteMilestones: function (milestoneId) {
+        let self = this
+
+        console.log(milestoneId)
+
+        // hide the add milestone button for a sec
+        self.milestoneDeleteHide = true
+        self.milestoneHide = true
+        setTimeout(function () {
+          self.milestoneDeleteHide = false
+          self.milestoneAddHide = false
+        }, 2000)
+        
+        self.$store.dispatch('deleteMilestones', {"Id": toString(milestoneId)})
+        .then(function (res) {
+          console.log(res)
+          
+        })
+        
+      },
+      setMilestone: function (context_id, start_date, end_date, jurisdiction) {
         let self = this
         return new Promise(function(resolve, reject) {
           let params = {
@@ -264,7 +334,8 @@
             "extention_start": "0000/00/00",
             "extention_end": "0000/00/00",
             "extention_details": "extention_details create", 
-            "agreement_id": self.agreement.agreement_jurisdictions[0].post_name + '-' + self.$router.history.current.params.agreement
+            "agreement_id": jurisdiction + '-' + self.$router.history.current.params.agreement,
+            "jurisdiction": jurisdiction
           }
 
 
@@ -274,6 +345,8 @@
       }
     },
     data: () => ({
+      deleteIds: [],
+      deleteMode: false,
       milestoneAddHide: false,
       timeout: false,
       agreement: {},

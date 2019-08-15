@@ -1,7 +1,7 @@
 <template>
   <v-app>
         <v-content>
-    <v-layout  style=" margin:0 important" fill-height wrap>
+    <v-layout style="background-color:#ecebe9 !important;margin:0 important" fill-height wrap>
       <v-navigation-drawer v-if="$cookies.get('Token-l3253h')" style="background-color:#23282d" height="100%" width="180" dark permanent>
           <v-toolbar style="background-color:#23282d" flat>
             <v-list>
@@ -40,11 +40,18 @@
 
          
         </v-navigation-drawer>
-
-        <v-flex v-if="$route.path == '/login'" xs12>
-          
-          <router-view></router-view>
-        </v-flex>
+        <v-content  v-if="$route.path == '/login' || $route.path == '/'">
+          <v-container style="background-color:#ecebe9 !important; " fluid fill-height>
+            <v-layout
+              
+            >
+              <v-flex text-xs-center>
+                
+                <router-view></router-view>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
         <v-flex v-else xs8>
           
           <router-view></router-view>
@@ -78,3 +85,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .loginButton hover{
+      color:white !important;
+  }
+</style>

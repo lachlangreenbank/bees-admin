@@ -3,7 +3,7 @@
   <v-content>
     <v-container fluid fill-height style="position:relative;top:20%">
       <v-layout align-center justify-center>
-        <v-flex  xs12 sm8 md6 text-xs-center>
+        <v-flex  xs12 sm8 md6>
           <v-card max-width="650px"    style='padding:60px 10%; margin: 0 auto; width:100%' color="#F7901E" class="elevation-12">
             <v-toolbar dark flat color="#F7901E">
               <v-toolbar-title> </v-toolbar-title>
@@ -32,7 +32,7 @@
             </v-flex>
             <v-card-actions style="margin-top:20px">
               <v-spacer></v-spacer>
-              <v-btn v-on:keyup.enter="login()"  @click="login()" color="white" flat> <span style="margin-top:2px;color:black">Login</span> <v-btn  style="width:20px;height:20px;margin-left:20px" color="#9A3820" icon><v-icon color="white" style="font-size:10px">arrow_forward_ios</v-icon></v-btn></v-btn>
+              <v-btn class="loginButton" v-on:keyup.enter="login()"  @click="login()" color="white" flat> <span style="margin-top:2px;color:black">Login</span> <v-btn class="loginButton"  style="width:20px;height:20px;margin-left:20px" color="#9A3820" icon><v-icon color="white" style="font-size:10px">arrow_forward_ios</v-icon></v-btn></v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -102,11 +102,10 @@
   }
 </script>
 
-<style type="text/css">
-  
-  /* Bee Pest Surveillance Program logo - white */
- 
-
+<style>
+  .loginButton:hover{
+      color:white !important;
+  }
 </style>
 
  

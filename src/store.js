@@ -55,6 +55,10 @@ export default new Vuex.Store({
       console.log(milestone)
       state.milestone = milestone
   	},
+    deleteMilestones (state, milestone) {
+      console.log(milestone)
+      state.milestone = milestone
+    },
   	setCurrentMilestone (state, currentMilestones) {
       console.log(currentMilestones)
       state.currentMilestones = currentMilestones
@@ -170,12 +174,42 @@ export default new Vuex.Store({
           })
         .then(res => (context.commit('setCurrentMilestone', res.data, { root: true })))
     },
+    deleteMilestones(context, Params) {
+      console.log('getting data')
+
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/milestone/delete', {
+              Token: getToken(),
+              ...Params
+            })
+          .then(function (res) {
+            (context.commit('setCurrentMilestone', res.data, { root: true }))
+            resolve(res)
+          })
+        })
+    },
     getMilestoneLogs(context, Params) {
       console.log('getting data')
 
       return new Promise(function(resolve, reject) {
         axios
           .post('http://pha-bees.sodadev.com/api/milestone_logs/single', {
+              Token: getToken(),
+              ...Params
+            })
+          .then(function (res) {
+            (context.commit('setMilestoneLogs', res.data, { root: true }))
+            resolve(res)
+          })
+        })
+    },
+    getAllMilestoneLogs(context, Params) {
+      console.log('getting data')
+
+      return new Promise(function(resolve, reject) {
+        axios
+          .post('http://pha-bees.sodadev.com/api/milestone_logs/all', {
               Token: getToken(),
               ...Params
             })

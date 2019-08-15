@@ -15,7 +15,7 @@
             <label for="exampleFormControlSelect1">Milestone status</label>
             <select v-model="milestoneStatus" class="form-control" id="exampleFormControlSelect1">
               <option>created</option>
-              <option>in progress</option>
+<!--               <option>in progress</option> -->
               <option>pending review</option>
               <option>completed</option>
             </select>
@@ -48,7 +48,7 @@
 
 
               <v-flex xs6>
-            <label for="exampleFormControlSelect1">Extention status</label>
+            <label for="exampleFormControlSelect1">Extension status</label>
             <select v-model="extentionStatus" class="form-control" id="exampleFormControlSelect1">
               <option>pending</option>
               <option>approved</option>
@@ -63,7 +63,7 @@
               <v-flex xs12>
               <v-layout wrap>
               <v-flex xs6>
-                <label for="exampleFormControlSelect1">Extention start date</label>
+                <label for="exampleFormControlSelect1">Extension start date</label>
 
 
                   <b-form-input :id="`type-date`" type="date"
@@ -74,7 +74,7 @@
                   ></b-form-input>
               </v-flex>
               <v-flex xs6>
-                <label for="exampleFormControlSelect1">Extention end date</label>
+                <label for="exampleFormControlSelect1">Extension end date</label>
                   <b-form-input :id="`type-date`" type="date"<b-form-input :id="`type-date`" type="date"
                     id="input-2"
                     v-model="extentionDates.endDate"
@@ -193,13 +193,20 @@ import { mapState } from 'vuex'
       }
     },
     watch: {
+      'extentionDates.endDate': function (newVal, oldVal){
+         //to work with changes in someOtherProp
+        console.log('go')
+          if (this.extentionDates.endDate != '0000-00-00' ) {
+            this.milestoneDates.endDate = this.extentionDates.endDate
+          }
+        },
       milestoneCreateStatus: function  () {
         console.log("updated")
         this.updated = 'updated'
         let self = this
 
         setTimeout( function () {
-            self.updated = 'update'
+           self.updated = 'update'
         }, 5000)
         
       },
