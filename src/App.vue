@@ -56,7 +56,7 @@
           
           <router-view></router-view>
         </v-flex>
-        <p v-if="$cookies.get('Token-l3253h')" @click="logout()" style="cursor:pointer; position:absolute; right:20px; top:20px;">Logout</p>
+        <!-- <p v-if="$cookies.get('Token-l3253h')" @click="logout()" style="cursor:pointer; position:absolute; right:20px; top:20px;">Logout</p> -->
       </v-layout>
 
       

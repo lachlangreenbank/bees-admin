@@ -247,51 +247,6 @@
         }
         setTheNewMilestone()
       },
-      addExtraMilestone: function () {
-        let self = this
-
-        // hide the add milestone button for a sec
-        self.milestoneAddHide = true
-        setTimeout(function () {
-          self.milestoneAddHide = false
-        }, 2000)
-
-        var last_element = this.filteredMilestones[0];
-        console.log(this.filteredMilestones.length)
-        let context_id = last_element.context_id.split("-");
-        // Construct the new context ID by getting length of current limestones to get the next number and attach that to the agreement id
-        context_id = context_id[0] + '-' +  (this.filteredMilestones.length + 1)
-
-        let milestone_start = new Date(last_element.date_end)
-        milestone_start.setDate(milestone_start.getDate() + 1)
-
-        let milestone_end = new Date(last_element.date_end)
-        milestone_end.setDate(milestone_start.getDate() + 43)
-
-        let getFormattedDate = function (dateObj) {
-          var month = dateObj.getUTCMonth() + 1; //months from 1-12
-          var day = dateObj.getUTCDate();
-          var year = dateObj.getUTCFullYear();
-
-          return year + "/" + month + "/" + day;
-        }
-
-        console.log(context_id + ' ' + getFormattedDate(milestone_start) + ' ' + getFormattedDate(milestone_end))
-        let setTheNewMilestone = async function () {
-          await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end), self.agreement.agreement_jurisdictions[0].post_name)
-          .then(function (res) {
-            console.log(res)
-            self.filteredMilestones.push(Object.assign({
-              Milestone_Id: 'Milestone ' + (res.data.data[0].ms_context_id).split("-")[1],
-              date_start: getFormattedDate(milestone_start),
-              date_end: getFormattedDate(milestone_end)
-            },
-              self.renameKeys(res.data.data[0])))
-            // self.reload()
-          })
-        }
-        setTheNewMilestone()
-      },
       deleteMilestones: function (milestoneId) {
         let self = this
 
@@ -361,6 +316,10 @@
           },
           {
             key: 'status',
+            sortable: true
+          },
+          {
+            key: 'extention_status',
             sortable: true
           },
           {

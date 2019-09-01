@@ -8,7 +8,7 @@
           
               <v-flex>
                 <v-card style="padding:20px;" color="white">
-                  <v-card-title   class="title">All agreeements</v-card-title>
+                  <v-card-title   class="title">All Agreements</v-card-title>
                   <div>
                   <b-table class="agreement-list" hover :items="agreements.data" :fields="agreementListFields">
 
