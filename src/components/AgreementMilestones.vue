@@ -13,7 +13,7 @@
                     <template slot="Open" slot-scope="row">
                       <v-btn v-if="row.item.Open" color="success"  @click="ready = 'milestoneDetail'; row.item.Open = true" small outline>{{row.item.Open}}</v-btn>
                       <v-btn :to="'./' + $router.currentRoute.params.agreement + '/' + (row.index + 1) + '/m_id/' + row.item.milestone_Id" v-if="!row.item.Open"  @click="  row.item.Open = true" small outline>open</v-btn>
-                      <v-btn v-if="deleteMode"  @click="deleteMilestones(row.item.milestone_Id)" red small>Delete</v-btn>
+                      <v-btn v-if="deleteMode && row.index + 1 == filteredMilestones.length"   @click="deleteMilestones(row.item.milestone_Id)" red small>Delete</v-btn>
                     </template>
                   </b-table>
 
@@ -66,8 +66,11 @@
         console.log(self.agreement)
         
         // If 6 milestones dont exist for this agreement, go create missing ones
-        if (milestones.length < 10) {
-          self.fillEmptyMilestones(milestones, agreement)
+        if (milestones.length < 1) {
+          // if (milestones.length < 10) {
+          // for (let i = 0; i < 10; i++) {
+            self.fillEmptyMilestones(milestones, agreement)
+          // }
         }
 
         console.log( self.filteredMilestones)
@@ -142,9 +145,9 @@
           ms_date_end: 'date_end', 
           ms_date_start: 'date_start', 
           ms_extention_details: 'extention_details', 
-          ms_extention_end: 'extention_end', 
+          ms_extention_end: 'extension_end', 
           ms_extention_start: 'extention_start', 
-          ms_extention_status: 'extention_status', 
+          ms_extention_status: 'extension_status', 
           ms_floral_sweep: 'floral_sweep', 
           ms_frame_inspection: 'frame_inspection', 
           ms_hive: 'hive', 
@@ -236,7 +239,7 @@
           await self.setMilestone(context_id, getFormattedDate(milestone_start), getFormattedDate(milestone_end), self.agreement.agreement_jurisdictions[0].post_name)
           .then(function (res) {
             console.log(res)
-            self.filteredMilestones.push(Object.assign({
+            self.filteredMilestones.unshift(Object.assign({
               Milestone_Id: 'Milestone ' + (res.data.data[0].ms_context_id).split("-")[1],
               date_start: getFormattedDate(milestone_start),
               date_end: getFormattedDate(milestone_end)
@@ -251,6 +254,7 @@
         let self = this
 
         console.log(milestoneId)
+        this.ready = false
 
         // hide the add milestone button for a sec
         self.milestoneDeleteHide = true
@@ -260,10 +264,13 @@
           self.milestoneAddHide = false
         }, 2000)
         
-        self.$store.dispatch('deleteMilestones', {"Id": toString(milestoneId)})
+        self.$store.dispatch('deleteMilestones', {"Id": milestoneId})
         .then(function (res) {
           console.log(res)
-          
+          self.filteredMilestones.shift()
+          self.deleteMode = false
+          self.milestoneDeleteHide = false
+          self.ready = true
         })
         
       },
@@ -285,10 +292,10 @@
             // "additional_activities": this.availableTests[7].selected ? "1" : "0",
             "date_start":  start_date,
             "date_end": end_date,
-            "extention_status": "0",
+            "extention_status": "",
             "extention_start": "0000/00/00",
             "extention_end": "0000/00/00",
-            "extention_details": "extention_details create", 
+            "extention_details": "", 
             "agreement_id": jurisdiction + '-' + self.$router.history.current.params.agreement,
             "jurisdiction": jurisdiction
           }
@@ -319,7 +326,7 @@
             sortable: true
           },
           {
-            key: 'extention_status',
+            key: 'extension_status',
             sortable: true
           },
           {
